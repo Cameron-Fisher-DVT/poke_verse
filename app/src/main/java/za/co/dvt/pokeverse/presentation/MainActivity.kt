@@ -1,4 +1,4 @@
-package za.co.dvt.pokeverse
+package za.co.dvt.pokeverse.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import za.co.dvt.pokeverse.ui.theme.PokeVerseTheme
+import za.co.dvt.pokeverse.presentation.ui.theme.PokeVerseTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

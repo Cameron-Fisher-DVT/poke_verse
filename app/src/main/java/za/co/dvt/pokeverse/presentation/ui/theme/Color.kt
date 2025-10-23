@@ -1,4 +1,4 @@
-package za.co.dvt.pokeverse.ui.theme
+package za.co.dvt.pokeverse.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
