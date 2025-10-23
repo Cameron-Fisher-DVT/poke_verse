@@ -1,4 +1,4 @@
-package za.co.dvt.pokeverse.common.data.remote.ktorClient
+package za.co.dvt.pokeverse.common.data.remote.infrastructure.ktor
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android

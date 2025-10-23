@@ -1,4 +1,4 @@
-package za.co.dvt.pokeverse.common.data.remote.constants
+package za.co.dvt.pokeverse.common.data.remote.config
 
 object ApiConstants {
     private const val BASE_URL = "https://pokeapi.co/api/v2"
