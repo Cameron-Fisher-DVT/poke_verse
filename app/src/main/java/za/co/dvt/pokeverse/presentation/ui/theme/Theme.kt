@@ -1,6 +1,5 @@
-package za.co.dvt.pokeverse.ui.theme
+package za.co.dvt.pokeverse.presentation.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
