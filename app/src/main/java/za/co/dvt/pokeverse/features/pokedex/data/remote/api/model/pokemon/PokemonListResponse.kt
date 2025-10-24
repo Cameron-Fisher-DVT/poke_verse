@@ -1,11 +1,11 @@
-package za.co.dvt.pokeverse.common.data.remote.api.model.pokemon
+package za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import za.co.dvt.pokeverse.common.data.remote.api.model.pokemon.dto.PokemonResultDto
+import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.dto.PokemonResultDto
 
 @Serializable
-class PokemonListResponse(
+data class PokemonListResponse(
     val count: Int = 0,
     val next: String = "",
     val previous: String? = null,

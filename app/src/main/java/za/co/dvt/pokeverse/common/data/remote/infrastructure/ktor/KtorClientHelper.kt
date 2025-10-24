@@ -28,7 +28,7 @@ object KtorClientHelper {
             ApiResponse.Error(e.message)
         } catch (e: Exception) {
             Log.e(this.javaClass.name, e.message ?: "")
-            ApiResponse.Error(e.message)
+            ApiResponse.Error(e.message ?: "")
         }
     }
 }
