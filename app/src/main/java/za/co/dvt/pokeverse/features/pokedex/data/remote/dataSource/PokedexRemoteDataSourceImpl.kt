@@ -7,7 +7,7 @@ import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.Pokemo
 class PokedexRemoteDataSourceImpl(
     private val pokemonApiAdapter: PokemonApiAdapter
 ): PokedexRemoteDataSource {
-    override suspend fun fetchPokemonResponseList(): ApiResponse<PokemonListResponse> {
-        return pokemonApiAdapter.fetchPokemon()
+    override suspend fun fetchPokemonListResponse(): ApiResponse<PokemonListResponse> {
+        return pokemonApiAdapter.fetchPokemonListResponse()
     }
 }

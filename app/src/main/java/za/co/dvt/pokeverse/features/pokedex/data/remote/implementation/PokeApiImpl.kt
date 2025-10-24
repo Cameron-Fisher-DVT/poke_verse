@@ -6,7 +6,7 @@ import za.co.dvt.pokeverse.common.data.remote.config.ApiConstants
 import za.co.dvt.pokeverse.common.data.remote.infrastructure.ktor.KtorClient
 
 class PokeApiImpl: KtorClient() {
-    suspend fun fetchPokemon(): HttpResponse {
+    suspend fun fetchPokemonList(): HttpResponse {
         return client.get(ApiConstants.POKEMON_ENDPOINT)
     }
 }

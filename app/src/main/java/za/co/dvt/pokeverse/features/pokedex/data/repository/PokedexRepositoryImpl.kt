@@ -12,7 +12,7 @@ class PokedexRepositoryImpl(
     private val pokedexRemoteDataSource: PokedexRemoteDataSource
 ) : PokedexRepository {
     override suspend fun fetchPokemonList(): Result<List<Pokemon>> {
-        return when (val apiResponse = pokedexRemoteDataSource.fetchPokemonResponseList()) {
+        return when (val apiResponse = pokedexRemoteDataSource.fetchPokemonListResponse()) {
             is ApiResponse.Success<PokemonListResponse> -> {
                 Result.Success(PokemonMapper.mapToDomainList(apiResponse.data))
             }
