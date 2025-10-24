@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.koin.androidx.compose.koinViewModel
 import za.co.dvt.pokeverse.features.pokedex.data.remote.adapter.PokemonApiAdapter
 import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemoteDataSourceImpl
 import za.co.dvt.pokeverse.features.pokedex.data.remote.implementation.PokeApiImpl
@@ -37,17 +38,7 @@ fun PokedexScreen(
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
-    val pokedexScreenViewModel = PokedexScreenViewModel(
-        FetchPokemonListUseCase(
-            PokedexRepositoryImpl(
-                PokedexRemoteDataSourceImpl(
-                    PokemonApiAdapter(
-                        PokeApiImpl()
-                    )
-                )
-            )
-        )
-    )
+    val pokedexScreenViewModel: PokedexScreenViewModel = koinViewModel()
 
     BottomSheetScaffold(
         topBar = {

@@ -40,11 +40,11 @@ class PokedexRemoteDataSourceImplTest {
     )
 
     @Test
-    @DisplayName("Should Return Success When Fetch Pokemon Response List Is Called")
-    fun shouldReturnSuccessWhenFetchPokemonResponseListIsCalled() = runTest {
-        coEvery { pokemonApiAdapter.fetchPokemon() } returns ApiResponse.Success(mockPokemonListResponse)
+    @DisplayName("Should Return Success When Fetch Pokemon List Response Is Called")
+    fun shouldReturnSuccessWhenFetchPokemonListResponseIsCalled() = runTest {
+        coEvery { pokemonApiAdapter.fetchPokemonListResponse() } returns ApiResponse.Success(mockPokemonListResponse)
 
-        val result = sut.fetchPokemonResponseList()
+        val result = sut.fetchPokemonListResponse()
 
         assertTrue(result is ApiResponse.Success)
         result as ApiResponse.Success
@@ -54,12 +54,12 @@ class PokedexRemoteDataSourceImplTest {
     }
 
     @Test
-    @DisplayName("Should Return Error When Fetch Pokemon Response List Fails")
-    fun shouldReturnErrorWhenFetchPokemonResponseListFails() = runTest {
+    @DisplayName("Should Return Error When Fetch Pokemon List Response Fails")
+    fun shouldReturnErrorWhenFetchPokemonListResponseFails() = runTest {
         val errorMessage = "Network error"
-        coEvery { pokemonApiAdapter.fetchPokemon() } returns ApiResponse.Error(errorMessage)
+        coEvery { pokemonApiAdapter.fetchPokemonListResponse() } returns ApiResponse.Error(errorMessage)
 
-        val result = sut.fetchPokemonResponseList()
+        val result = sut.fetchPokemonListResponse()
 
         assertTrue(result is ApiResponse.Error)
         result as ApiResponse.Error

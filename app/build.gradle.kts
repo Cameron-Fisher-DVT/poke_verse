@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
-    id("de.mannodermaus.android-junit5") version "1.14.0.0"
+    alias(libs.plugins.de.mannodermaus.android.junit5)
 }
 
 android {
@@ -77,4 +77,11 @@ dependencies {
     // Mockk
     testImplementation(libs.mockk.android)
     testImplementation(libs.mockk.agent)
+
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.core)
+    implementation(libs.koin.compose)
+    implementation(libs.koin.compose.viewmodel)
 }

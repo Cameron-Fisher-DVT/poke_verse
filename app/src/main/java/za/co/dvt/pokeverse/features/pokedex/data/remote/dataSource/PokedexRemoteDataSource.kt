@@ -4,5 +4,5 @@ import za.co.dvt.pokeverse.common.data.remote.common.ApiResponse
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.PokemonListResponse
 
 interface PokedexRemoteDataSource {
-    suspend fun fetchPokemonResponseList(): ApiResponse<PokemonListResponse>
+    suspend fun fetchPokemonListResponse(): ApiResponse<PokemonListResponse>
 }
