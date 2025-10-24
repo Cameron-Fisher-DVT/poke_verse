@@ -26,10 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import za.co.dvt.pokeverse.features.pokedex.data.remote.adapter.PokemonApiAdapter
-import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemoteDataSource
+import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemoteDataSourceImpl
 import za.co.dvt.pokeverse.features.pokedex.data.remote.implementation.PokeApiImpl
 import za.co.dvt.pokeverse.features.pokedex.data.repository.PokedexRepositoryImpl
-import za.co.dvt.pokeverse.features.pokedex.domain.repository.PokedexRepository
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonListUseCase
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,8 +37,17 @@ fun PokedexScreen(
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
-    val pokedexScreenViewModel = PokedexScreenViewModel(FetchPokemonListUseCase(PokedexRepositoryImpl(PokedexRemoteDataSource(PokemonApiAdapter(
-        PokeApiImpl())))))
+    val pokedexScreenViewModel = PokedexScreenViewModel(
+        FetchPokemonListUseCase(
+            PokedexRepositoryImpl(
+                PokedexRemoteDataSourceImpl(
+                    PokemonApiAdapter(
+                        PokeApiImpl()
+                    )
+                )
+            )
+        )
+    )
 
     BottomSheetScaffold(
         topBar = {
