@@ -25,6 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import za.co.dvt.pokeverse.features.pokedex.data.remote.adapter.PokemonApiAdapter
+import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemoteDataSource
+import za.co.dvt.pokeverse.features.pokedex.data.remote.implementation.PokeApiImpl
+import za.co.dvt.pokeverse.features.pokedex.data.repository.PokedexRepositoryImpl
+import za.co.dvt.pokeverse.features.pokedex.domain.repository.PokedexRepository
+import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonListUseCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,6 +38,8 @@ fun PokedexScreen(
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
+    val pokedexScreenViewModel = PokedexScreenViewModel(FetchPokemonListUseCase(PokedexRepositoryImpl(PokedexRemoteDataSource(PokemonApiAdapter(
+        PokeApiImpl())))))
 
     BottomSheetScaffold(
         topBar = {
@@ -78,15 +86,15 @@ fun PokedexScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val categoryList = listOf("Pokemon 1", "Pokemon 2", "Pokemon 3", "Pokemon 4", "Pokemon 5")
+                val pokemonList = pokedexScreenViewModel.pokemonListState.value.pokemonList
                 LazyColumn(
                     modifier = modifier.padding(16.dp)
                 ) {
                     items(
-                        count = categoryList.size
+                        count = pokemonList.size
                     ) { index ->
                         //TODO: [06] - Create a UI module with custom views
-                        Text(categoryList[index])
+                        Text(pokemonList[index].name)
                         Spacer(modifier.size(10.dp))
                     }
                 }
