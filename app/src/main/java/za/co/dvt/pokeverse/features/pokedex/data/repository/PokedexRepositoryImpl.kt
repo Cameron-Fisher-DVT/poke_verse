@@ -10,6 +10,7 @@ import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.Pokemo
 import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemoteDataSource
 import za.co.dvt.pokeverse.features.pokedex.data.remote.mapper.RemotePokemonMapper
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
+import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.PokemonInformation
 import za.co.dvt.pokeverse.features.pokedex.domain.repository.PokedexRepository
 
 class PokedexRepositoryImpl(
@@ -47,4 +48,10 @@ class PokedexRepositoryImpl(
             }
         }
     }
+
+    override suspend fun fetchPokemonInformation(pokemonId: String): Result<PokemonInformation> {
+        TODO("Not yet implemented")
+    }
+
+
 }

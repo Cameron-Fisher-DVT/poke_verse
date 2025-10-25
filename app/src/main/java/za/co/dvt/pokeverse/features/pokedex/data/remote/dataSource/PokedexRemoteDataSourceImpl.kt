@@ -4,6 +4,7 @@ import za.co.dvt.pokeverse.common.data.remote.common.ApiResponse
 import za.co.dvt.pokeverse.common.data.remote.infrastructure.NetworkResponse
 import za.co.dvt.pokeverse.features.pokedex.data.remote.adapter.PokemonApiAdapter
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.PokemonListResponse
+import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInformationResponse.PokemonInformationResponse
 
 class PokedexRemoteDataSourceImpl(
     private val pokemonApiAdapter: PokemonApiAdapter
@@ -20,5 +21,9 @@ class PokedexRemoteDataSourceImpl(
                 ApiResponse.Success(networkResponse.data)
             }
         }
+    }
+
+    override suspend fun fetchPokemonInformationResponse(pokemonId: String): ApiResponse<PokemonInformationResponse> {
+
     }
 }

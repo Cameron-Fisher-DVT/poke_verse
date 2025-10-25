@@ -9,4 +9,8 @@ class PokeApiImpl: KtorClient() {
     suspend fun fetchPokemonList(): HttpResponse {
         return client.get(ApiConstants.POKEMON_ENDPOINT)
     }
+
+    suspend fun fetchPokemonInformation(pokemonId: String): HttpResponse {
+        return client.get(ApiConstants.POKEMON_ENDPOINT)
+    }
 }
