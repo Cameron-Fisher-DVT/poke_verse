@@ -8,10 +8,12 @@ import kotlinx.coroutines.launch
 import za.co.dvt.pokeverse.common.domain.common.Result
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonListUseCase
+import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SavePokemonListUseCase
 import za.co.dvt.pokeverse.presentation.BaseViewModel
 
 class PokedexScreenViewModel(
-    private val fetchPokemonListUseCase: FetchPokemonListUseCase
+    private val fetchPokemonListUseCase: FetchPokemonListUseCase,
+    private val savePokemonListUseCase: SavePokemonListUseCase
 ) : BaseViewModel() {
 
     init {
@@ -43,6 +45,7 @@ class PokedexScreenViewModel(
             }
             is Result.Success<List<Pokemon>> -> {
                 displayProgressDialog(false)
+                savePokemonListUseCase(result.data)
                 pokemonListMutableState.value = PokemonListState(pokemonList = result.data)
             }
         }

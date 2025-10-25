@@ -5,4 +5,5 @@ import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 
 interface PokedexRepository {
     suspend fun fetchPokemonList(): Result<List<Pokemon>>
+    suspend fun savePokemonList(pokemonList: List<Pokemon>): Result<String>
 }
