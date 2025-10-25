@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import za.co.dvt.composecorelib.buttons.CustomCardItemView
+import za.co.dvt.composecorelib.model.Item
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,9 +54,18 @@ fun PokedexStatScreen(
                 .padding(padding)
         ) {
             Column(
+                modifier = modifier.padding(top = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Stat")
+                CustomCardItemView(
+                    itemBuilder = Item.Builder()
+                        .title("Name")
+                        .description("Pokemon adventure"),
+                    onFavoriteClick = { item ->
+                        //TODO: [03] RoomDB for local caching
+                    }
+                ) {
+                }
             }
         }
     }

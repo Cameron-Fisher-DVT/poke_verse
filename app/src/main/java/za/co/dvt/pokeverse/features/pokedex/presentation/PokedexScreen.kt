@@ -26,11 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
-import za.co.dvt.pokeverse.features.pokedex.data.remote.adapter.PokemonApiAdapter
-import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemoteDataSourceImpl
-import za.co.dvt.pokeverse.features.pokedex.data.remote.implementation.PokeApiImpl
-import za.co.dvt.pokeverse.features.pokedex.data.repository.PokedexRepositoryImpl
-import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonListUseCase
+import za.co.dvt.composecorelib.buttons.CustomCardItemView
+import za.co.dvt.composecorelib.model.Item
+import za.co.dvt.pokeverse.common.extensions.toTitleCase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,15 +84,17 @@ fun PokedexScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val pokemonList = pokedexScreenViewModel.pokemonListState.value.pokemonList
-                LazyColumn(
-                    modifier = modifier.padding(16.dp)
-                ) {
+                LazyColumn {
                     items(
                         count = pokemonList.size
                     ) { index ->
-                        //TODO: [06] - Create a UI module with custom views
-                        Text(pokemonList[index].name)
-                        Spacer(modifier.size(10.dp))
+                        CustomCardItemView(
+                            itemBuilder = Item.Builder().title(pokemonList[index].name.toTitleCase()),
+                            onFavoriteClick = {
+                            }
+                        ) { item ->
+                            //TODO: [08] Jetpack navigation 3
+                        }
                     }
                 }
             }
