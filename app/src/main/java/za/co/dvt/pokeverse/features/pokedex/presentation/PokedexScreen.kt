@@ -21,6 +21,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -31,16 +35,20 @@ import za.co.dvt.composecorelib.buttons.CustomCardItemView
 import za.co.dvt.composecorelib.miscellaneous.ProgressDialogView
 import za.co.dvt.composecorelib.model.Item
 import za.co.dvt.pokeverse.common.extensions.toTitleCase
+import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
+import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.description
+import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreenViewModel.PokemonListState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokedexScreen(
     modifier: Modifier = Modifier,
-    onNavigateToPokedexStatScreenClick: (item: Item) -> Unit,
+    pokemonListState: State<PokemonListState>,
+    displayProgressDialogState: State<Boolean>,
+    onNavigateToPokedexStatScreenClick: (pokemon: Pokemon) -> Unit,
     onNavigateToMenuClick: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
-    val pokedexScreenViewModel: PokedexScreenViewModel = koinViewModel()
 
     BottomSheetScaffold(
         topBar = {
@@ -68,10 +76,22 @@ fun PokedexScreen(
                     .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
             ) {
                 Text(
-                    text = "Quick Stats",
+                    text = "Pokemon Go",
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge
                 )
+                if (pokemonListState.value.pokemonList.isNotEmpty()) {
+                    val pokemonGo = pokemonListState.value.pokemonList.random()
+                    CustomCardItemView(
+                        itemBuilder = Item.Builder()
+                            .title(pokemonGo.name.toTitleCase())
+                            .description(pokemonGo.description())
+                            .imageUrl(pokemonGo.imageUrl),
+                        onFavoriteClick = {
+                        }
+                    ) {
+                    }
+                }
             }
         },
         sheetPeekHeight = 90.dp,
@@ -87,7 +107,7 @@ fun PokedexScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val pokemonList = pokedexScreenViewModel.pokemonListState.value.pokemonList
+                val pokemonList = pokemonListState.value.pokemonList
                 LazyColumn {
                     items(
                         count = pokemonList.size
@@ -99,8 +119,8 @@ fun PokedexScreen(
                                 .imageUrl(pokemonList[index].imageUrl),
                             onFavoriteClick = {
                             }
-                        ) { item ->
-                            onNavigateToPokedexStatScreenClick(item)
+                        ) {
+                            onNavigateToPokedexStatScreenClick(pokemonList[index])
                         }
                     }
                 }
@@ -108,11 +128,15 @@ fun PokedexScreen(
         }
     }
 
-    ProgressDialogView(isLoading = pokedexScreenViewModel.displayProgressDialogState.value)
+    ProgressDialogView(isLoading = displayProgressDialogState.value)
 }
 
 @Composable
 @Preview(showBackground = true)
 fun PreviewPokedexScreen() {
-    PokedexScreen(onNavigateToPokedexStatScreenClick = {}) {}
+    PokedexScreen(
+        pokemonListState = remember { mutableStateOf(PokemonListState())},
+        displayProgressDialogState = remember { mutableStateOf(false)},
+        onNavigateToPokedexStatScreenClick = {}
+    ) {}
 }

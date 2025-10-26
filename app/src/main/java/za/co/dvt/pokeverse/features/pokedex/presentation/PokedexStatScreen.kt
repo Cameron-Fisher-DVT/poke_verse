@@ -15,17 +15,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import za.co.dvt.composecorelib.buttons.CustomCardItemView
+import za.co.dvt.composecorelib.miscellaneous.ProgressDialogView
 import za.co.dvt.composecorelib.model.Item
+import za.co.dvt.pokeverse.common.extensions.toTitleCase
+import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
+import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.description
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokedexStatScreen(
     modifier: Modifier = Modifier,
+    pokemon: Pokemon,
+    pokemonFavouriteState: State<PokedexStatScreenViewModel.PokemonFavouriteState>,
+    displayProgressDialogState: State<Boolean>,
+    onFavouriteClick: (pokemon: Pokemon) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
     Scaffold(
@@ -59,20 +70,29 @@ fun PokedexStatScreen(
             ) {
                 CustomCardItemView(
                     itemBuilder = Item.Builder()
-                        .title("Name")
-                        .description("Pokemon adventure"),
-                    onFavoriteClick = { item ->
-                        //TODO: [03] RoomDB for local caching
+                        .title(pokemon.name.toTitleCase())
+                        .subTitle("${pokemon.statsList.first().stat.name}: ${pokemon.statsList.first().score}")
+                        .description(pokemon.description())
+                        .imageUrl(pokemon.imageUrl),
+                    isFavoriteItem = pokemonFavouriteState.value.pokemon.isFavourite,
+                    showFavoriteIcon = true,
+                    onFavoriteClick = {
+                        onFavouriteClick(pokemon.copy(isFavourite = !pokemonFavouriteState.value.pokemon.isFavourite))
                     }
-                ) {
-                }
+                ) {}
             }
         }
     }
+    ProgressDialogView(isLoading = displayProgressDialogState.value)
 }
 
 @Composable
 @Preview(showBackground = true)
 fun PreviewPokedexStatScreen() {
-    PokedexStatScreen() {}
+    PokedexStatScreen(
+        pokemon = Pokemon(),
+        displayProgressDialogState = remember { mutableStateOf(false) },
+        pokemonFavouriteState = remember { mutableStateOf(PokedexStatScreenViewModel.PokemonFavouriteState()) },
+        onFavouriteClick = {}
+    ) {}
 }

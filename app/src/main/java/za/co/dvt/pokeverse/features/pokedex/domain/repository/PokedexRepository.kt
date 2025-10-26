@@ -8,4 +8,5 @@ interface PokedexRepository {
     suspend fun fetchPokemonList(): Result<List<Pokemon>>
     suspend fun savePokemonList(pokemonList: List<Pokemon>): Result<String>
     suspend fun fetchPokemonInformation(pokemonId: String): Result<PokemonInformation>
+    suspend fun updatePokemon(pokemon: Pokemon): Result<Pokemon>
 }

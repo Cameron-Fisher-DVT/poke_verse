@@ -5,7 +5,16 @@ data class Pokemon(
     val name: String = "",
     val imageUrl: String = "",
     val isBattleOnly: Boolean = false,
-    val description: String = "",
     val abilityList: List<PokemonAbility> = emptyList(),
-    val statsList: List<Stats> = emptyList()
+    val statsList: List<Stats> = emptyList(),
+    val isFavourite: Boolean = false
 )
+
+fun Pokemon.description(): String {
+    val stringBuilder = StringBuilder()
+    this.statsList.forEach {
+        stringBuilder.append("${it.stat.name}: ${it.score}")
+        stringBuilder.appendLine()
+    }
+    return stringBuilder.toString()
+}
