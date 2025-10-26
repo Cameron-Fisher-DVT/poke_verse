@@ -5,6 +5,9 @@ import za.co.dvt.pokeverse.common.data.local.database.ApplicationDatabase
 import za.co.dvt.pokeverse.common.data.local.database.JetpackRoomDBImpl
 import za.co.dvt.pokeverse.common.manager.resourceManager.ResourceManager
 import za.co.dvt.pokeverse.common.manager.resourceManager.ResourceManagerImpl
+import za.co.dvt.pokeverse.presentation.navigation.DefaultNavigator
+import za.co.dvt.pokeverse.presentation.navigation.Destination
+import za.co.dvt.pokeverse.presentation.navigation.Navigator
 
 val presentationModule = module {
     single<ResourceManager> {
@@ -14,4 +17,9 @@ val presentationModule = module {
     single<ApplicationDatabase> {
         JetpackRoomDBImpl.getDatabase(get())
     }
+
+    single<Navigator> {
+        DefaultNavigator(startDestination = Destination.HomeGraph.route)
+    }
+
 }

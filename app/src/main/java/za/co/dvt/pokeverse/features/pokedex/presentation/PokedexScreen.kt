@@ -35,7 +35,9 @@ import za.co.dvt.pokeverse.common.extensions.toTitleCase
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokedexScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToPokedexStatScreenClick: (item: Item) -> Unit,
+    onNavigateToMenuClick: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val pokedexScreenViewModel: PokedexScreenViewModel = koinViewModel()
@@ -46,7 +48,7 @@ fun PokedexScreen(
                 title = { Text("PokeVerse") },
                 actions = {
                     IconButton(
-                        onClick = { }
+                        onClick = { onNavigateToMenuClick() }
                     ) {
                         Icon(Icons.Rounded.Menu, "Menu")
                     }
@@ -98,7 +100,7 @@ fun PokedexScreen(
                             onFavoriteClick = {
                             }
                         ) { item ->
-                            //TODO: [08] Jetpack navigation 3
+                            onNavigateToPokedexStatScreenClick(item)
                         }
                     }
                 }
@@ -112,5 +114,5 @@ fun PokedexScreen(
 @Composable
 @Preview(showBackground = true)
 fun PreviewPokedexScreen() {
-    PokedexScreen()
+    PokedexScreen(onNavigateToPokedexStatScreenClick = {}) {}
 }
