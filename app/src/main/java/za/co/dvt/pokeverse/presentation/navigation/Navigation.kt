@@ -56,7 +56,11 @@ fun Navigation(
                 route = Destination.PokedexScreen.route
             ) { backStackEntry ->
                 val pokedexScreenViewModel = koinViewModel<PokedexScreenViewModel>()
-                PokedexScreen(onNavigateToPokedexStatScreenClick = { item ->
+                PokedexScreen(
+                    pokemonListState = pokedexScreenViewModel.pokemonListState,
+                    displayProgressDialogState = pokedexScreenViewModel.displayProgressDialogState,
+                    onNavigateToPokedexStatScreenClick = { pokemon ->
+                    pokedexScreenViewModel.saveSelectedPokemon(pokemon)
                     pokedexScreenViewModel.navigateToPokedexStatScreen()
                 }) {
                     pokedexScreenViewModel.navigateToMenuScreen()
@@ -69,6 +73,12 @@ fun Navigation(
                 val pokedexStatScreenViewModel = koinViewModel<PokedexStatScreenViewModel>()
 
                 PokedexStatScreen (
+                    pokemon = pokedexStatScreenViewModel.getSelectedPokemon(),
+                    onFavouriteClick = { pokemon ->
+                        pokedexStatScreenViewModel.updatePokemon(pokemon)
+                    },
+                    displayProgressDialogState = pokedexStatScreenViewModel.displayProgressDialogState,
+                    pokemonFavouriteState = pokedexStatScreenViewModel.pokemonFavouriteState,
                     onNavigateUp = {
                         pokedexStatScreenViewModel.navigateToPokedexScreen()
                     }

@@ -9,5 +9,6 @@ data class PokemonEntity(
     @PrimaryKey
     val pokemonId: String = "",
     val name: String = "",
-    val imageUrl: String = ""
+    val imageUrl: String = "",
+    val isFavourite: Boolean = false
 )

@@ -18,10 +18,11 @@ import za.co.dvt.pokeverse.presentation.navigation.Destination
 import za.co.dvt.pokeverse.presentation.navigation.Navigator
 
 class PokedexScreenViewModel(
+    private val pokedexFlowManager: PokedexFlowManager,
+    private val navigator: Navigator,
     private val fetchPokemonListUseCase: FetchPokemonListUseCase,
     private val savePokemonListUseCase: SavePokemonListUseCase,
-    private val fetchPokemonInformationUseCase: FetchPokemonInformationUseCase,
-    private val navigator: Navigator
+    private val fetchPokemonInformationUseCase: FetchPokemonInformationUseCase
 ) : BaseViewModel() {
 
     init {
@@ -33,7 +34,7 @@ class PokedexScreenViewModel(
         val errorMessage: String = ""
     )
 
-    private val displayProgressDialogMutableState = mutableStateOf(false)
+    private val displayProgressDialogMutableState = mutableStateOf(true)
     val displayProgressDialogState: State<Boolean> = displayProgressDialogMutableState
 
     private val pokemonListMutableState = mutableStateOf(PokemonListState())
@@ -45,6 +46,10 @@ class PokedexScreenViewModel(
 
     fun navigateToPokedexStatScreen() = viewModelScope.launch(Dispatchers.IO) {
         navigator.navigate(destination = Destination.PokedexStatScreen.route)
+    }
+
+    fun saveSelectedPokemon(pokemon: Pokemon) {
+        pokedexFlowManager.selectedPokemon = pokemon
     }
 
     fun navigateToMenuScreen() = viewModelScope.launch(Dispatchers.IO) {

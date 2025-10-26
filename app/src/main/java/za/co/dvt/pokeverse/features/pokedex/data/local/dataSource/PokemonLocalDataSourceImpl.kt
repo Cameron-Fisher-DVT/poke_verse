@@ -26,4 +26,13 @@ class PokemonLocalDataSourceImpl(
             DatabaseResponse.Success("Successfully saved.")
         }
     }
+
+    override suspend fun updatePokemon(pokemonEntity: PokemonEntity): DatabaseResponse<PokemonEntity> {
+        val result = pokemonDao.update(pokemonEntity)
+        return if (result == DatabaseConstants.INVALID_OPERATION.toInt() ) {
+            DatabaseResponse.Error("Item not update.")
+        } else {
+            DatabaseResponse.Success(pokemonEntity)
+        }
+    }
 }

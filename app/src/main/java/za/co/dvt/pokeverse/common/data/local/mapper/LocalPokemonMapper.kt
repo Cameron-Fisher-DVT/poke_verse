@@ -11,7 +11,8 @@ object LocalPokemonMapper {
         return Pokemon(
             pokemonId = pokemonEntity.pokemonId,
             name = pokemonEntity.name,
-            imageUrl = pokemonEntity.imageUrl
+            imageUrl = pokemonEntity.imageUrl,
+            isFavourite = pokemonEntity.isFavourite
         )
     }
 
@@ -19,7 +20,8 @@ object LocalPokemonMapper {
         return PokemonEntity(
             pokemonId = pokemon.pokemonId,
             name = pokemon.name,
-            imageUrl = pokemon.imageUrl
+            imageUrl = pokemon.imageUrl,
+            isFavourite = pokemon.isFavourite
         )
     }
 

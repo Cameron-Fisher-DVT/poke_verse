@@ -16,6 +16,9 @@ import za.co.dvt.pokeverse.features.pokedex.domain.repository.PokedexRepository
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonInformationUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonListUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SavePokemonListUseCase
+import za.co.dvt.pokeverse.features.pokedex.domain.usecase.UpdatePokemonUseCase
+import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexFlowManager
+import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreen
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreenViewModel
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexStatScreenViewModel
 
@@ -40,8 +43,15 @@ val pokedexModule = module {
     factory {
         FetchPokemonInformationUseCase(get())
     }
+    factory {
+        UpdatePokemonUseCase(get())
+    }
+
+    single { PokedexFlowManager() }
+
     viewModel {
         PokedexScreenViewModel(
+            get(),
             get(),
             get(),
             get(),
@@ -51,6 +61,8 @@ val pokedexModule = module {
 
     viewModel {
         PokedexStatScreenViewModel(
+            get(),
+            get(),
             get()
         )
     }

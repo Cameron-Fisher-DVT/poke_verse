@@ -7,4 +7,5 @@ import za.co.dvt.pokeverse.common.data.local.model.PokemonWithAbilities
 interface PokemonLocalDataSource {
     suspend fun fetchAllPokemonWithAbilities(): DatabaseResponse<List<PokemonWithAbilities>>
     suspend fun savePokemonList(pokemonEntityList: List<PokemonEntity>): DatabaseResponse<String>
+    suspend fun updatePokemon(pokemonEntity: PokemonEntity): DatabaseResponse<PokemonEntity>
 }

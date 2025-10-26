@@ -2,6 +2,7 @@ package za.co.dvt.pokeverse.features.pokedex.data.repository
 
 import za.co.dvt.pokeverse.common.data.local.common.DatabaseResponse
 import za.co.dvt.pokeverse.common.data.local.mapper.LocalPokemonMapper
+import za.co.dvt.pokeverse.common.data.local.model.PokemonEntity
 import za.co.dvt.pokeverse.common.data.local.model.PokemonWithAbilities
 import za.co.dvt.pokeverse.common.data.remote.common.ApiResponse
 import za.co.dvt.pokeverse.common.domain.common.Result
@@ -58,6 +59,18 @@ class PokedexRepositoryImpl(
 
             is ApiResponse.Error<PokemonInformationResponse> -> {
                 Result.Error(apiResponse.message)
+            }
+        }
+    }
+
+    override suspend fun updatePokemon(pokemon: Pokemon): Result<Pokemon> {
+        return when (val databaseResponse = pokemonLocalDataSource.updatePokemon(LocalPokemonMapper.mapToPokemonEntity(pokemon))) {
+            is DatabaseResponse.Error<PokemonEntity> -> {
+                Result.Error(databaseResponse.message)
+            }
+
+            is DatabaseResponse.Success<PokemonEntity> -> {
+                Result.Success(LocalPokemonMapper.mapToPokemon(databaseResponse.data))
             }
         }
     }
