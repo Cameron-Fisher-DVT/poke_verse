@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PokeVerse"
 include(":app")
+include(":app:composeCoreLib")
