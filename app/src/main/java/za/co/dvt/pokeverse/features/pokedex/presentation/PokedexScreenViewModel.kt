@@ -72,7 +72,8 @@ class PokedexScreenViewModel(
                 val pokemonInformation = (result as Result.Success<PokemonInformation>).data
                 pokemon.copy(
                     imageUrl = pokemonInformation.frontDefaultSprite,
-                    isBattleOnly = pokemonInformation.isBattleOnly
+                    isBattleOnly = pokemonInformation.isBattleOnly,
+                    statsList = pokemonInformation.stats
                 )
             }
 

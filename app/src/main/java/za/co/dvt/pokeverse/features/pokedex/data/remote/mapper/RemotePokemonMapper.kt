@@ -4,9 +4,13 @@ import za.co.dvt.pokeverse.common.extensions.extractIdFromUrl
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.PokemonListResponse
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInformationResponse.PokemonInformationResponse
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInformationResponse.dto.PokemonAbilityDto
+import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInformationResponse.dto.StatDto
+import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInformationResponse.dto.StatsDto
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.PokemonAbility
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.PokemonInformation
+import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Stat
+import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Stats
 
 object RemotePokemonMapper {
     fun mapToPokemonList(pokemonListResponse: PokemonListResponse): List<Pokemon> {
@@ -22,7 +26,8 @@ object RemotePokemonMapper {
         return PokemonInformation(
             frontDefaultSprite = pokemonInformationResponse.spriteDto.frontDefault,
             pokemonAbilityList = mapToPokemonAbilityList(pokemonInformationResponse.pokemonAbilityDtoList),
-            isBattleOnly = pokemonInformationResponse.isBattleOnly
+            isBattleOnly = pokemonInformationResponse.isBattleOnly,
+            stats = mapToStatsList(pokemonInformationResponse.stats)
         )
     }
 
@@ -35,5 +40,22 @@ object RemotePokemonMapper {
 
     fun mapToPokemonAbilityList(pokemonAbilityDtoList: List<PokemonAbilityDto>): List<PokemonAbility> {
         return pokemonAbilityDtoList.map { mapToPokemonAbility(it) }
+    }
+
+    fun mapToStat(statDto: StatDto): Stat {
+        return Stat(
+            name = statDto.name
+        )
+    }
+
+    fun mapToStats(statsDto: StatsDto): Stats {
+        return Stats(
+            score = statsDto.score,
+            stat = mapToStat(statsDto.statDto)
+        )
+    }
+
+    fun mapToStatsList(statsDtoList: List<StatsDto>): List<Stats> {
+        return statsDtoList.map { mapToStats(it) }
     }
 }

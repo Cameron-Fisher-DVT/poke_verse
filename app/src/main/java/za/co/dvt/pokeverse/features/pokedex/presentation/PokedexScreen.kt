@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import za.co.dvt.composecorelib.buttons.CustomCardItemView
+import za.co.dvt.composecorelib.miscellaneous.ProgressDialogView
 import za.co.dvt.composecorelib.model.Item
 import za.co.dvt.pokeverse.common.extensions.toTitleCase
 
@@ -89,8 +91,9 @@ fun PokedexScreen(
                         count = pokemonList.size
                     ) { index ->
                         CustomCardItemView(
-                            itemBuilder = Item.Builder().title(pokemonList[index]
-                                .name.toTitleCase())
+                            itemBuilder = Item.Builder()
+                                .title(pokemonList[index].name.toTitleCase())
+                                .subTitle("${pokemonList[index].statsList.first().stat.name}: ${pokemonList[index].statsList.first().score}")
                                 .imageUrl(pokemonList[index].imageUrl),
                             onFavoriteClick = {
                             }
@@ -102,6 +105,8 @@ fun PokedexScreen(
             }
         }
     }
+
+    ProgressDialogView(isLoading = pokedexScreenViewModel.displayProgressDialogState.value)
 }
 
 @Composable

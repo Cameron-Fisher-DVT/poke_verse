@@ -6,5 +6,6 @@ data class Pokemon(
     val imageUrl: String = "",
     val isBattleOnly: Boolean = false,
     val description: String = "",
-    val abilityList: List<PokemonAbility> = emptyList()
+    val abilityList: List<PokemonAbility> = emptyList(),
+    val statsList: List<Stats> = emptyList()
 )
