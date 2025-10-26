@@ -5,8 +5,12 @@ import io.ktor.client.statement.HttpResponse
 import za.co.dvt.pokeverse.common.data.remote.config.ApiConstants
 import za.co.dvt.pokeverse.common.data.remote.infrastructure.ktor.KtorClient
 
-class PokeApiImpl: KtorClient() {
+class PokeApiImpl : KtorClient() {
     suspend fun fetchPokemonList(): HttpResponse {
-        return client.get(ApiConstants.POKEMON_ENDPOINT)
+        return client.get("${ApiConstants.POKEMON_ENDPOINT}?limit=100")
+    }
+
+    suspend fun fetchPokemonInformation(pokemonId: String): HttpResponse {
+        return client.get("${ApiConstants.POKEMON_INFORMATION_ENDPOINT}$pokemonId")
     }
 }

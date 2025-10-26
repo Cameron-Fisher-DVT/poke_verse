@@ -6,3 +6,12 @@ fun String.toTitleCase(): String {
     }
     return this[0].uppercase() + this.substring(1)
 }
+
+fun String.extractIdFromUrl(): String {
+    val segments = this.split("/")
+    return if (segments.size >= 2) {
+        segments[segments.size - 2]
+    } else {
+        ""
+    }
+}
