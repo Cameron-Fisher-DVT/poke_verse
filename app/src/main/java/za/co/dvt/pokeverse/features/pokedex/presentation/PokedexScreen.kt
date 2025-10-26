@@ -89,7 +89,9 @@ fun PokedexScreen(
                         count = pokemonList.size
                     ) { index ->
                         CustomCardItemView(
-                            itemBuilder = Item.Builder().title(pokemonList[index].name.toTitleCase()),
+                            itemBuilder = Item.Builder().title(pokemonList[index]
+                                .name.toTitleCase())
+                                .imageUrl(pokemonList[index].imageUrl),
                             onFavoriteClick = {
                             }
                         ) { item ->

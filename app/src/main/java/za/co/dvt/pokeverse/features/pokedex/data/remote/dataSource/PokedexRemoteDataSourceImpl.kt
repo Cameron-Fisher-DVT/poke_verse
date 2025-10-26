@@ -24,6 +24,16 @@ class PokedexRemoteDataSourceImpl(
     }
 
     override suspend fun fetchPokemonInformationResponse(pokemonId: String): ApiResponse<PokemonInformationResponse> {
-
+        return when(val networkResponse = pokemonApiAdapter.fetchPokemonInformationResponse(pokemonId)) {
+            is NetworkResponse.HttpError -> {
+                ApiResponse.Error(networkResponse.message)
+            }
+            is NetworkResponse.NetworkError -> {
+                ApiResponse.Error(networkResponse.exception.message ?: "")
+            }
+            is NetworkResponse.Success<PokemonInformationResponse> -> {
+                ApiResponse.Success(networkResponse.data)
+            }
+        }
     }
 }

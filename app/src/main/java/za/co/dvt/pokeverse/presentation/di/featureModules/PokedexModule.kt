@@ -11,6 +11,7 @@ import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemote
 import za.co.dvt.pokeverse.features.pokedex.data.remote.implementation.PokeApiImpl
 import za.co.dvt.pokeverse.features.pokedex.data.repository.PokedexRepositoryImpl
 import za.co.dvt.pokeverse.features.pokedex.domain.repository.PokedexRepository
+import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonInformationUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonListUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SavePokemonListUseCase
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreenViewModel
@@ -33,5 +34,8 @@ val pokedexModule = module {
     factory {
         SavePokemonListUseCase(get())
     }
-    viewModel { PokedexScreenViewModel(get(), get()) }
+    factory {
+        FetchPokemonInformationUseCase(get())
+    }
+    viewModel { PokedexScreenViewModel(get(), get(), get()) }
 }

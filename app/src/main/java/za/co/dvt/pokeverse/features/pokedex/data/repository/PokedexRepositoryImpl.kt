@@ -7,6 +7,7 @@ import za.co.dvt.pokeverse.common.data.remote.common.ApiResponse
 import za.co.dvt.pokeverse.common.domain.common.Result
 import za.co.dvt.pokeverse.features.pokedex.data.local.dataSource.PokemonLocalDataSource
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.PokemonListResponse
+import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInformationResponse.PokemonInformationResponse
 import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemoteDataSource
 import za.co.dvt.pokeverse.features.pokedex.data.remote.mapper.RemotePokemonMapper
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
@@ -50,8 +51,14 @@ class PokedexRepositoryImpl(
     }
 
     override suspend fun fetchPokemonInformation(pokemonId: String): Result<PokemonInformation> {
-        TODO("Not yet implemented")
+        return when (val apiResponse = pokedexRemoteDataSource.fetchPokemonInformationResponse(pokemonId)) {
+            is ApiResponse.Success<PokemonInformationResponse> -> {
+                Result.Success(RemotePokemonMapper.mapToPokemonInformation(apiResponse.data))
+            }
+
+            is ApiResponse.Error<PokemonInformationResponse> -> {
+                Result.Error(apiResponse.message)
+            }
+        }
     }
-
-
 }

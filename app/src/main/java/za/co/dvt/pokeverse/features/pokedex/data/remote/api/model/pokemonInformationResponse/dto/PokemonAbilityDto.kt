@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SpriteDto(
-    @SerialName("front_default")
-    val frontDefault: String = ""
+data class PokemonAbilityDto(
+    @SerialName("ability")
+    val abilityDto: AbilityDto = AbilityDto()
 )
