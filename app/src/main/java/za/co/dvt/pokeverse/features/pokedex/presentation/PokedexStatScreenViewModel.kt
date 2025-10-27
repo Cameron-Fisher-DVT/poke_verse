@@ -51,6 +51,11 @@ class PokedexStatScreenViewModel(
             is Result.Success<Pokemon> -> {
                 displayProgressDialog(false)
                 pokemonFavouriteMutableState.value = PokemonFavouriteState(pokemon = result.data)
+                if (result.data.isFavourite) {
+                    displaySnackbar("Added to favourites.")
+                } else {
+                    displaySnackbar("Removed from favourites.")
+                }
             }
         }
     }
