@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import za.co.dvt.pokeverse.common.domain.common.Result
 import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_ITEMS_PER_PAGE
 import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_LIST_LIMIT
+import za.co.dvt.pokeverse.features.menu.domain.usecase.FetchDarkModeUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.PokemonInformation
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonInformationUseCase
@@ -24,7 +25,8 @@ class PokedexScreenViewModel(
     private val navigator: Navigator,
     private val fetchPokemonListUseCase: FetchPokemonListUseCase,
     private val savePokemonListUseCase: SavePokemonListUseCase,
-    private val fetchPokemonInformationUseCase: FetchPokemonInformationUseCase
+    private val fetchPokemonInformationUseCase: FetchPokemonInformationUseCase,
+    private val fetchDarkModeUseCase: FetchDarkModeUseCase
 ) : BaseViewModel() {
 
     data class PokemonListState(
@@ -49,6 +51,8 @@ class PokedexScreenViewModel(
     val canLoadPreviousMutableState = mutableStateOf((requestParameterState.value.offset + requestParameterState.value.limit) > POKEMON_ITEMS_PER_PAGE)
     val canLoadNextMutableState = mutableStateOf(requestParameterState.value.limit < POKEMON_LIST_LIMIT)
     val pokemonItemsMutableState = mutableStateOf("${requestParameterState.value.offset + 1}-${minOf(requestParameterState.value.offset + requestParameterState.value.limit, POKEMON_LIST_LIMIT)}")
+
+    val isDarkModeMutableState = mutableStateOf(false)
 
     fun paginate(increase: Boolean) {
         val newOffset = if (increase) {
@@ -76,22 +80,27 @@ class PokedexScreenViewModel(
 
     init {
         fetchPokemonList()
+        fetchDarkMode()
     }
 
     private fun displayProgressDialog(shouldDisplay: Boolean = true) {
         displayProgressDialogMutableState.value = shouldDisplay
     }
 
-    fun navigateToPokedexStatScreen() = viewModelScope.launch(Dispatchers.IO) {
-        navigator.navigate(destination = Destination.PokedexStatScreen.route)
+    fun navigateToPokedexStatScreen() = viewModelScope.launch(Dispatchers.Main) {
+        navigator.navigate(destination = Destination.PokedexStatScreen.route) {
+            launchSingleTop = true
+        }
     }
 
     fun saveSelectedPokemon(pokemon: Pokemon) {
         pokedexFlowManager.selectedPokemon = pokemon
     }
 
-    fun navigateToMenuScreen() = viewModelScope.launch(Dispatchers.IO) {
-        navigator.navigate(destination = Destination.MenuScreen.route)
+    fun navigateToMenuScreen() = viewModelScope.launch(Dispatchers.Main) {
+        navigator.navigate(destination = Destination.MenuScreen.route) {
+            launchSingleTop = true
+        }
     }
 
     fun fetchPokemonList() = CoroutineScope(Dispatchers.IO).launch {
@@ -135,5 +144,16 @@ class PokedexScreenViewModel(
 
         displayProgressDialog(false)
         pokemonListMutableState.value = PokemonListState(pokemonList = successfulResults)
+    }
+
+    fun fetchDarkMode() = viewModelScope.launch {
+        when (val result = fetchDarkModeUseCase()) {
+            is Result.Error -> {
+                isDarkModeMutableState.value = false
+            }
+            is Result.Success<Boolean> -> {
+                isDarkModeMutableState.value = result.data
+            }
+        }
     }
 }

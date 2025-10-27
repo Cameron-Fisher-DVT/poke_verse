@@ -43,11 +43,12 @@ fun Navigation(
             ) {
                 val menuScreenViewModel = koinViewModel<MenuScreenViewModel>()
                 MenuScreen(
-                    isDarkModeMutableState = menuScreenViewModel.isDarkModeMutableState,
+                    isDarkModeState = menuScreenViewModel.isDarkModeMutableState,
                     onNavigateUp = {
                         menuScreenViewModel.navigateToPokedexScreen()
                     }
                 ) { isDarkMode ->
+                    menuScreenViewModel.saveDarkMode(isDarkMode)
                     onCheckChangedDarkMode(isDarkMode)
                 }
             }
@@ -68,7 +69,11 @@ fun Navigation(
                     },
                     canLoadPrevious = pokedexScreenViewModel.canLoadPreviousMutableState,
                     canLoadNext = pokedexScreenViewModel.canLoadNextMutableState,
-                    pokemonItemsMutableState = pokedexScreenViewModel.pokemonItemsMutableState
+                    pokemonItemsMutableState = pokedexScreenViewModel.pokemonItemsMutableState,
+                    isDarkModeState = pokedexScreenViewModel.isDarkModeMutableState,
+                    onDarkModeChanged = {
+                        onCheckChangedDarkMode(it)
+                    }
                 ) {
                     pokedexScreenViewModel.navigateToMenuScreen()
                 }

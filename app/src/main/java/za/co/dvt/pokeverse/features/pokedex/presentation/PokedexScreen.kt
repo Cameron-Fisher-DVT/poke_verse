@@ -20,16 +20,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import za.co.dvt.composecorelib.common.data.model.Item
 import za.co.dvt.composecorelib.features.presentation.buttons.CustomCardItemView
 import za.co.dvt.composecorelib.features.presentation.miscellaneous.ProgressDialogView
+import za.co.dvt.pokeverse.R
 import za.co.dvt.pokeverse.common.extensions.toTitleCase
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.description
@@ -46,6 +49,8 @@ fun PokedexScreen(
     canLoadPrevious: State<Boolean>,
     canLoadNext: State<Boolean>,
     pokemonItemsMutableState: State<String>,
+    isDarkModeState: State<Boolean>,
+    onDarkModeChanged: (Boolean) -> Unit,
     onNavigateToPokedexStatScreenClick: (pokemon: Pokemon) -> Unit,
     onNavigateToMenuClick: () -> Unit
 ) {
@@ -54,7 +59,7 @@ fun PokedexScreen(
     BottomSheetScaffold(
         topBar = {
             TopAppBar(
-                title = { Text("PokeVerse") },
+                title = { Text(stringResource(R.string.pokedex_poke_verse)) },
                 actions = {
 
                     IconButton(
@@ -63,7 +68,7 @@ fun PokedexScreen(
                     ) {
                         Icon(
                             Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
-                            contentDescription = "Previous"
+                            contentDescription = stringResource(R.string.pokedex_previous)
                         )
                     }
 
@@ -78,13 +83,13 @@ fun PokedexScreen(
                     ) {
                         Icon(
                             Icons.AutoMirrored.Rounded.KeyboardArrowRight,
-                            contentDescription = "Next"
+                            contentDescription = stringResource(R.string.pokedex_next)
                         )
                     }
                     IconButton(
                         onClick = { onNavigateToMenuClick() }
                     ) {
-                        Icon(Icons.Rounded.Menu, "Menu")
+                        Icon(Icons.Rounded.Menu, stringResource(R.string.pokedex_menu))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -102,7 +107,7 @@ fun PokedexScreen(
                     .padding(start = dimensions.spacing16, end = dimensions.spacing16, bottom = dimensions.spacing16)
             ) {
                 Text(
-                    text = "Pokemon Go",
+                    text = stringResource(R.string.pokedex_pokemon_go),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge
                 )
@@ -136,7 +141,8 @@ fun PokedexScreen(
                 val pokemonList = pokemonListState.value.pokemonList
                 LazyColumn {
                     items(
-                        count = pokemonList.size
+                        count = pokemonList.size,
+                        key = { index -> pokemonList[index].pokemonId }
                     ) { index ->
                         CustomCardItemView(
                             itemBuilder = Item.Builder()
@@ -150,14 +156,11 @@ fun PokedexScreen(
                         }
                     }
                 }
-
-
-
-
             }
         }
     }
 
+    onDarkModeChanged(isDarkModeState.value)
     ProgressDialogView(isLoading = displayProgressDialogState.value)
 }
 
@@ -171,6 +174,8 @@ fun PreviewPokedexScreen() {
         paginate = {},
         canLoadPrevious = remember { mutableStateOf(false)},
         canLoadNext = remember { mutableStateOf(false)},
+        isDarkModeState = remember { mutableStateOf(false) },
+        onDarkModeChanged = {},
         pokemonItemsMutableState = remember { mutableStateOf("") }
     ) {}
 }

@@ -1,6 +1,5 @@
 package za.co.dvt.composecorelib.features.presentation.informational
 
-import za.co.dvt.composecorelib.R
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +17,14 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
+import za.co.dvt.composecorelib.R
 
 @Composable
-fun ExpandableTextView(text: String, modifier: Modifier = Modifier) {
+fun ExpandableTextView(
+    modifier: Modifier = Modifier,
+    text: String,
+    maxLinesToDisplay: Int = 3
+) {
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     val isExpandable by remember { derivedStateOf { textLayoutResult?.didOverflowHeight ?: false } }
     var isExpanded by remember { mutableStateOf(false) }
@@ -32,7 +36,7 @@ fun ExpandableTextView(text: String, modifier: Modifier = Modifier) {
         Text(
             text = text,
             modifier = Modifier.animateContentSize(),
-            maxLines = if (isExpanded) Int.MAX_VALUE else 3,
+            maxLines = if (isExpanded) Int.MAX_VALUE else maxLinesToDisplay,
             overflow = TextOverflow.Ellipsis,
             onTextLayout = { textLayoutResult = it },
             style = MaterialTheme.typography.bodyLarge

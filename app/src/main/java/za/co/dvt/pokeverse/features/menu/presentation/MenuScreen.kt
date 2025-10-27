@@ -25,30 +25,35 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import za.co.dvt.pokeverse.R
+import androidx.compose.runtime.State
+import za.co.dvt.pokeverse.presentation.ui.theme.LocalDimensions
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MenuScreen(
     modifier: Modifier = Modifier,
-    isDarkModeMutableState: MutableState<Boolean>,
+    isDarkModeState: State<Boolean>,
     onNavigateUp: () -> Unit,
     onToggleDarkMode: (isDarkMode: Boolean) -> Unit
 ) {
+    val dimensions = LocalDimensions.current
+
     Scaffold(
         modifier = modifier.wrapContentSize(),
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Menu")
+                    Text(text = stringResource(R.string.menu))
                 },
                 navigationIcon = {
                     IconButton(
                         onClick = { onNavigateUp() }
                     ) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, "ArrowBack")
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.menu_arrow_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -65,28 +70,27 @@ fun MenuScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            Column(modifier = modifier.padding(16.dp)) {
+            Column(modifier = modifier.padding(dimensions.spacing16)) {
                 Text(
-                    modifier = modifier.padding(start = 16.dp),
-                    text = "Settings",
+                    modifier = modifier.padding(start = dimensions.spacing16),
+                    text = stringResource(R.string.menu_settings),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Row(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(dimensions.spacing16),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Dark Mode",
+                        text = stringResource(R.string.menu_dark_mode),
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Switch(
-                        checked = isDarkModeMutableState.value,
+                        checked = isDarkModeState.value,
                         onCheckedChange = {
-                            isDarkModeMutableState.value = it
                             onToggleDarkMode(it)
                         }
                     )
@@ -100,7 +104,7 @@ fun MenuScreen(
 @Composable
 fun MenuScreenPreview() {
     MenuScreen(
-        isDarkModeMutableState = remember { mutableStateOf(false) },
+        isDarkModeState = remember { mutableStateOf(false) },
         onNavigateUp = {
         }
     ) {}
