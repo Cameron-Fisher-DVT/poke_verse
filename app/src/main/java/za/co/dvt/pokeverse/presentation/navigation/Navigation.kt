@@ -63,8 +63,8 @@ fun Navigation(
                         pokedexScreenViewModel.saveSelectedPokemon(pokemon)
                         pokedexScreenViewModel.navigateToPokedexStatScreen()
                     },
-                    updateOffset = {
-                        pokedexScreenViewModel.updateOffset(it)
+                    paginate = {
+                        pokedexScreenViewModel.paginate(it)
                     },
                     canLoadPrevious = pokedexScreenViewModel.canLoadPreviousMutableState,
                     canLoadNext = pokedexScreenViewModel.canLoadNextMutableState,

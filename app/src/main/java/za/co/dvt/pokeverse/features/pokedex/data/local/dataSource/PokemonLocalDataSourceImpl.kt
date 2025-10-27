@@ -9,8 +9,8 @@ import za.co.dvt.pokeverse.common.data.local.model.PokemonWithAbilities
 class PokemonLocalDataSourceImpl(
     private val pokemonDao: PokemonDao
 ) : PokemonLocalDataSource {
-    override suspend fun fetchAllPokemonWithAbilities(): DatabaseResponse<List<PokemonWithAbilities>> {
-        val pokemonWithAbilitiesList = pokemonDao.fetchAllPokemonWithAbilities()
+    override suspend fun fetchAllPokemonWithAbilities(offset: Int, limit: Int): DatabaseResponse<List<PokemonWithAbilities>> {
+        val pokemonWithAbilitiesList = pokemonDao.fetchAllPokemonWithAbilities(offset, limit)
         return if (pokemonWithAbilitiesList.isNotEmpty()) {
             DatabaseResponse.Success(pokemonWithAbilitiesList)
         } else {

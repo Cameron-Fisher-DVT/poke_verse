@@ -1,7 +1,6 @@
 package za.co.dvt.pokeverse.features.pokedex.presentation
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -9,6 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import za.co.dvt.pokeverse.common.domain.common.Result
+import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_ITEMS_PER_PAGE
+import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_LIST_LIMIT
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.PokemonInformation
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonInformationUseCase
@@ -17,8 +18,6 @@ import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SavePokemonListUseCas
 import za.co.dvt.pokeverse.presentation.BaseViewModel
 import za.co.dvt.pokeverse.presentation.navigation.Destination
 import za.co.dvt.pokeverse.presentation.navigation.Navigator
-import kotlin.compareTo
-import kotlin.text.compareTo
 
 class PokedexScreenViewModel(
     private val pokedexFlowManager: PokedexFlowManager,
@@ -47,16 +46,11 @@ class PokedexScreenViewModel(
     private val pokemonListMutableState = mutableStateOf(PokemonListState())
     val pokemonListState: State<PokemonListState> = pokemonListMutableState
 
-    private companion object {
-        const val POKEMON_ITEMS_PER_PAGE = 20
-        const val POKEMON_LIST_LIMIT = 100
-    }
-
     val canLoadPreviousMutableState = mutableStateOf((requestParameterState.value.offset + requestParameterState.value.limit) > POKEMON_ITEMS_PER_PAGE)
     val canLoadNextMutableState = mutableStateOf(requestParameterState.value.limit < POKEMON_LIST_LIMIT)
     val pokemonItemsMutableState = mutableStateOf("${requestParameterState.value.offset + 1}-${minOf(requestParameterState.value.offset + requestParameterState.value.limit, POKEMON_LIST_LIMIT)}")
 
-    fun updateOffset(increase: Boolean) {
+    fun paginate(increase: Boolean) {
         val newOffset = if (increase) {
             requestParameterState.value.offset + (requestParameterState.value.limit - requestParameterState.value.offset)
         } else {
