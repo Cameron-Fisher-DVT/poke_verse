@@ -89,6 +89,7 @@ fun Navigation(
                     onFavouriteClick = { pokemon ->
                         pokedexStatScreenViewModel.updatePokemon(pokemon)
                     },
+                    snackbarHostState = pokedexStatScreenViewModel.snackbarHostState,
                     displayProgressDialogState = pokedexStatScreenViewModel.displayProgressDialogState,
                     pokemonFavouriteState = pokedexStatScreenViewModel.pokemonFavouriteState,
                     onNavigateUp = {
