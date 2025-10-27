@@ -8,6 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import za.co.dvt.pokeverse.common.domain.common.Result
+import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_ITEMS_PER_PAGE
+import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_LIST_LIMIT
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.PokemonInformation
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonInformationUseCase
@@ -25,20 +27,56 @@ class PokedexScreenViewModel(
     private val fetchPokemonInformationUseCase: FetchPokemonInformationUseCase
 ) : BaseViewModel() {
 
-    init {
-        fetchPokemonList()
-    }
-
     data class PokemonListState(
         val pokemonList: List<Pokemon> = emptyList(),
         val errorMessage: String = ""
     )
+
+    data class RequestParameterState(
+        val offset: Int = 0,
+        val limit: Int = 20
+    )
+
+    private val requestParameterMutableState = mutableStateOf(RequestParameterState())
+    val requestParameterState: State<RequestParameterState> = requestParameterMutableState
 
     private val displayProgressDialogMutableState = mutableStateOf(true)
     val displayProgressDialogState: State<Boolean> = displayProgressDialogMutableState
 
     private val pokemonListMutableState = mutableStateOf(PokemonListState())
     val pokemonListState: State<PokemonListState> = pokemonListMutableState
+
+    val canLoadPreviousMutableState = mutableStateOf((requestParameterState.value.offset + requestParameterState.value.limit) > POKEMON_ITEMS_PER_PAGE)
+    val canLoadNextMutableState = mutableStateOf(requestParameterState.value.limit < POKEMON_LIST_LIMIT)
+    val pokemonItemsMutableState = mutableStateOf("${requestParameterState.value.offset + 1}-${minOf(requestParameterState.value.offset + requestParameterState.value.limit, POKEMON_LIST_LIMIT)}")
+
+    fun paginate(increase: Boolean) {
+        val newOffset = if (increase) {
+            requestParameterState.value.offset + (requestParameterState.value.limit - requestParameterState.value.offset)
+        } else {
+            requestParameterState.value.offset - (requestParameterState.value.limit - requestParameterState.value.offset)
+        }
+
+        val newLimit = if (increase) {
+            requestParameterState.value.limit + (requestParameterState.value.limit - requestParameterState.value.offset)
+        } else {
+            requestParameterState.value.limit - (requestParameterState.value.limit - requestParameterState.value.offset)
+        }
+
+        if (newOffset in 0..POKEMON_LIST_LIMIT) {
+            requestParameterMutableState.value = RequestParameterState(offset = newOffset, limit = newLimit)
+            fetchPokemonList()
+        }
+
+        canLoadPreviousMutableState.value = (requestParameterState.value.offset + requestParameterState.value.limit) > POKEMON_ITEMS_PER_PAGE
+        canLoadNextMutableState.value = requestParameterState.value.limit < POKEMON_LIST_LIMIT
+        pokemonItemsMutableState.value = "${requestParameterState.value.offset + 1}-${minOf(requestParameterState.value.limit, POKEMON_LIST_LIMIT)}"
+    }
+
+
+    init {
+        fetchPokemonList()
+    }
 
     private fun displayProgressDialog(shouldDisplay: Boolean = true) {
         displayProgressDialogMutableState.value = shouldDisplay
@@ -58,7 +96,7 @@ class PokedexScreenViewModel(
 
     fun fetchPokemonList() = CoroutineScope(Dispatchers.IO).launch {
         displayProgressDialog()
-        val result = fetchPokemonListUseCase()
+        val result = fetchPokemonListUseCase(requestParameterState.value.offset, requestParameterState.value.limit)
         when (result) {
             is Result.Error -> {
                 displayProgressDialog(false)

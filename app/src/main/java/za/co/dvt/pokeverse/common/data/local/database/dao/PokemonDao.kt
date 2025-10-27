@@ -9,6 +9,6 @@ import za.co.dvt.pokeverse.common.data.local.model.PokemonWithAbilities
 @Dao
 interface PokemonDao: BaseDao<PokemonEntity> {
     @Transaction
-    @Query("SELECT * FROM pokemon")
-    fun fetchAllPokemonWithAbilities(): List<PokemonWithAbilities>
+    @Query("SELECT * FROM pokemon WHERE pokemonId BETWEEN :offset AND :limit ORDER BY pokemonId ASC")
+    fun fetchAllPokemonWithAbilities(offset: Int, limit: Int): List<PokemonWithAbilities>
 }

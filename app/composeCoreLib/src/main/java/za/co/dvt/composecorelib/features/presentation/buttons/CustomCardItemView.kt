@@ -1,4 +1,4 @@
-package za.co.dvt.composecorelib.buttons
+package za.co.dvt.composecorelib.features.presentation.buttons
 
 import za.co.dvt.composecorelib.R
 import androidx.compose.foundation.clickable
@@ -27,13 +27,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import za.co.dvt.composecorelib.informational.ExpandableTextView
-import za.co.dvt.composecorelib.miscellaneous.DividerView
-import za.co.dvt.composecorelib.model.Item
+import za.co.dvt.composecorelib.features.presentation.informational.ExpandableTextView
+import za.co.dvt.composecorelib.features.presentation.miscellaneous.DividerView
+import za.co.dvt.composecorelib.common.data.model.Item
+import za.co.dvt.composecorelib.presentation.ui.theme.LocalDimensions
 
 @Composable
 fun CustomCardItemView(
@@ -44,21 +46,22 @@ fun CustomCardItemView(
     onFavoriteClick: (item: Item) -> Unit,
     onClick: (item: Item) -> Unit
 ) {
+    val dimensions = LocalDimensions.current
     val item = itemBuilder.build()
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     Card(
         modifier = modifier
-            .padding(top = 8.dp, start = 16.dp, end = 16.dp)
+            .padding(top = dimensions.spacing16, start = dimensions.spacing16, end = dimensions.spacing16)
             .wrapContentSize()
             .clickable { onClick(item) }
     ) {
         if (showFavoriteIcon) {
-            Box(modifier = Modifier.offset((screenWidth.minus(80.dp)), 24.dp)) {
+            Box(modifier = Modifier.offset((screenWidth.minus(dimensions.spacing80)), dimensions.spacing24)) {
                 Icon(
                     imageVector = if (isFavoriteItem) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                    contentDescription = "Favorite",
+                    contentDescription = stringResource(R.string.custom_card_item_view_favourite),
                     modifier = Modifier.clickable { onFavoriteClick(item) },
-                    tint = Color.Red
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
         }
@@ -66,7 +69,7 @@ fun CustomCardItemView(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+                .padding(dimensions.spacing16),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -76,11 +79,11 @@ fun CustomCardItemView(
                 error = painterResource(R.drawable.placeholder),
                 contentScale = ContentScale.FillBounds,
                 modifier = modifier
-                    .width(100.dp)
-                    .height(120.dp)
+                    .width(dimensions.spacing100)
+                    .height(dimensions.spacing120)
             )
             Column(
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                modifier = Modifier.padding(start = dimensions.spacing16, end = dimensions.spacing16)
             ) {
                 Text(
                     text = item.title,
@@ -102,8 +105,8 @@ fun CustomCardItemView(
                     )
                     Icon(
                         imageVector = Icons.Filled.Star,
-                        contentDescription = "Star",
-                        tint = colorResource(R.color.gold)
+                        contentDescription = stringResource(R.string.custom_card_item_view_star),
+                        tint = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
@@ -126,6 +129,5 @@ fun PreviewCustomCardItemView() {
         itemBuilder = Item.Builder()
             .description("Hello"),
         onFavoriteClick = {}) {
-
     }
 }

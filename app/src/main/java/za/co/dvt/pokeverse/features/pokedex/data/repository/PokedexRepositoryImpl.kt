@@ -6,6 +6,7 @@ import za.co.dvt.pokeverse.common.data.local.model.PokemonEntity
 import za.co.dvt.pokeverse.common.data.local.model.PokemonWithAbilities
 import za.co.dvt.pokeverse.common.data.remote.common.ApiResponse
 import za.co.dvt.pokeverse.common.domain.common.Result
+import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_ITEMS_PER_PAGE
 import za.co.dvt.pokeverse.features.pokedex.data.local.dataSource.PokemonLocalDataSource
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.PokemonListResponse
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInformationResponse.PokemonInformationResponse
@@ -19,22 +20,31 @@ class PokedexRepositoryImpl(
     private val pokedexRemoteDataSource: PokedexRemoteDataSource,
     private val pokemonLocalDataSource: PokemonLocalDataSource
 ) : PokedexRepository {
-    override suspend fun fetchPokemonList(): Result<List<Pokemon>> {
-        return when (val databaseResponse = pokemonLocalDataSource.fetchAllPokemonWithAbilities()) {
+    override suspend fun fetchPokemonList(offset: Int, limit: Int): Result<List<Pokemon>> {
+        return when (val databaseResponse = pokemonLocalDataSource.fetchAllPokemonWithAbilities(offset, limit)) {
             is DatabaseResponse.Error<List<PokemonWithAbilities>> -> {
-                return when (val apiResponse = pokedexRemoteDataSource.fetchPokemonListResponse()) {
-                    is ApiResponse.Success<PokemonListResponse> -> {
-                        Result.Success(RemotePokemonMapper.mapToPokemonList(apiResponse.data))
-                    }
-
-                    is ApiResponse.Error<PokemonListResponse> -> {
-                        Result.Error(apiResponse.message)
-                    }
-                }
+                fetchRemotePokemonList(offset, limit)
             }
 
             is DatabaseResponse.Success<List<PokemonWithAbilities>> -> {
-                Result.Success(LocalPokemonMapper.mapToPokemonList(databaseResponse.data))
+                if (databaseResponse.data.size >= POKEMON_ITEMS_PER_PAGE) {
+                    Result.Success(LocalPokemonMapper.mapToPokemonList(databaseResponse.data))
+                } else {
+                    fetchRemotePokemonList(offset, limit)
+                }
+            }
+        }
+
+    }
+
+    private suspend fun fetchRemotePokemonList(offset: Int, limit: Int): Result<List<Pokemon>> {
+        return when (val apiResponse = pokedexRemoteDataSource.fetchPokemonListResponse(offset, limit)) {
+            is ApiResponse.Success<PokemonListResponse> -> {
+                Result.Success(RemotePokemonMapper.mapToPokemonList(apiResponse.data))
+            }
+
+            is ApiResponse.Error<PokemonListResponse> -> {
+                Result.Error(apiResponse.message)
             }
         }
     }

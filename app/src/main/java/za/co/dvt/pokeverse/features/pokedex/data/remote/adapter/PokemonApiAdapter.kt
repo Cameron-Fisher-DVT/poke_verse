@@ -10,9 +10,9 @@ import za.co.dvt.pokeverse.features.pokedex.data.remote.implementation.PokeApiIm
 class PokemonApiAdapter(
     private val adaptee: PokeApiImpl
 ): PokemonApi {
-    override suspend fun fetchPokemonListResponse(): NetworkResponse<PokemonListResponse> {
+    override suspend fun fetchPokemonListResponse(offset: Int, limit: Int): NetworkResponse<PokemonListResponse> {
         return KtorClientHelper.serviceCall {
-            adaptee.fetchPokemonList()
+            adaptee.fetchPokemonList(offset, limit)
         }
     }
 

@@ -1,5 +1,6 @@
 package za.co.dvt.pokeverse.features.pokedex.presentation
 
+import android.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,12 +23,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import za.co.dvt.composecorelib.buttons.CustomCardItemView
-import za.co.dvt.composecorelib.miscellaneous.ProgressDialogView
-import za.co.dvt.composecorelib.model.Item
+import za.co.dvt.composecorelib.features.presentation.buttons.CustomCardItemView
+import za.co.dvt.composecorelib.features.presentation.miscellaneous.ProgressDialogView
+import za.co.dvt.composecorelib.common.data.model.Item
 import za.co.dvt.pokeverse.common.extensions.toTitleCase
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.description
+import za.co.dvt.pokeverse.presentation.ui.theme.LocalDimensions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,6 +41,8 @@ fun PokedexStatScreen(
     onFavouriteClick: (pokemon: Pokemon) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
+    val dimensions = LocalDimensions.current
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -65,7 +69,7 @@ fun PokedexStatScreen(
                 .padding(padding)
         ) {
             Column(
-                modifier = modifier.padding(top = 16.dp),
+                modifier = modifier.padding(top = dimensions.spacing16),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CustomCardItemView(
