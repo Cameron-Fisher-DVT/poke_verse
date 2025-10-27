@@ -4,6 +4,7 @@ import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
+import za.co.dvt.pokeverse.presentation.di.featureModules.menuModule
 import za.co.dvt.pokeverse.presentation.di.featureModules.pokedexModule
 import za.co.dvt.pokeverse.presentation.di.presentationModule.presentationModule
 
@@ -13,7 +14,7 @@ class PokeVerseApplication : Application() {
         startKoin {
             androidContext(this@PokeVerseApplication)
             androidLogger()
-            modules(presentationModule, pokedexModule)
+            modules(presentationModule, pokedexModule, menuModule)
         }
     }
 }

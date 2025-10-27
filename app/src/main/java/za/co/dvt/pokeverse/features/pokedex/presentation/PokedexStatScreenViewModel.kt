@@ -2,6 +2,7 @@ package za.co.dvt.pokeverse.features.pokedex.presentation
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ class PokedexStatScreenViewModel(
     private val navigator: Navigator,
     private val updatePokemonUseCase: UpdatePokemonUseCase
 ): BaseViewModel() {
-    fun navigateToPokedexScreen() = CoroutineScope(Dispatchers.IO).launch {
+    fun navigateToPokedexScreen() = viewModelScope.launch(Dispatchers.Main) {
         navigator.navigateUp()
     }
 
@@ -35,12 +36,8 @@ class PokedexStatScreenViewModel(
         val errorMessage: String = ""
     )
 
-    private val pokemonFavouriteMutableState = mutableStateOf(PokemonFavouriteState())
+    private val pokemonFavouriteMutableState = mutableStateOf(PokemonFavouriteState(pokemon = pokedexFlowManager.selectedPokemon))
     val pokemonFavouriteState: State<PokemonFavouriteState> = pokemonFavouriteMutableState
-
-    init {
-        updatePokemon(pokedexFlowManager.selectedPokemon)
-    }
 
     fun updatePokemon(pokemon: Pokemon) = CoroutineScope(Dispatchers.IO).launch {
         displayProgressDialog()

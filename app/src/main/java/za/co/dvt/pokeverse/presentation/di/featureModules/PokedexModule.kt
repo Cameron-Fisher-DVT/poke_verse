@@ -55,6 +55,7 @@ val pokedexModule = module {
             get(),
             get(),
             get(),
+            get(),
             get()
         )
     }
@@ -68,6 +69,6 @@ val pokedexModule = module {
     }
 
     viewModel {
-        MenuScreenViewModel(get())
+        MenuScreenViewModel(get(), get(), get())
     }
 }

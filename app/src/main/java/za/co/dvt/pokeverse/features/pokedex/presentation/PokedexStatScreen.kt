@@ -1,6 +1,5 @@
 package za.co.dvt.pokeverse.features.pokedex.presentation
 
-import android.R
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -21,11 +20,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import za.co.dvt.composecorelib.common.data.model.Item
 import za.co.dvt.composecorelib.features.presentation.buttons.CustomCardItemView
 import za.co.dvt.composecorelib.features.presentation.miscellaneous.ProgressDialogView
-import za.co.dvt.composecorelib.common.data.model.Item
+import za.co.dvt.pokeverse.R
 import za.co.dvt.pokeverse.common.extensions.toTitleCase
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.description
@@ -42,16 +42,15 @@ fun PokedexStatScreen(
     onNavigateUp: () -> Unit,
 ) {
     val dimensions = LocalDimensions.current
-
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Pokemon name") },
+                title = { Text(stringResource(R.string.pokedex_stat_pokemon_name)) },
                 navigationIcon = {
                     IconButton(
                         onClick = { onNavigateUp() }
                     ) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, "ArrowBack")
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.pokedex_stat_arrow_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
