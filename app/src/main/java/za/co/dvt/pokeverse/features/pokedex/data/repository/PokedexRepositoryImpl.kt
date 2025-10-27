@@ -19,22 +19,23 @@ class PokedexRepositoryImpl(
     private val pokedexRemoteDataSource: PokedexRemoteDataSource,
     private val pokemonLocalDataSource: PokemonLocalDataSource
 ) : PokedexRepository {
-    override suspend fun fetchPokemonList(): Result<List<Pokemon>> {
-        return when (val databaseResponse = pokemonLocalDataSource.fetchAllPokemonWithAbilities()) {
+    override suspend fun fetchPokemonList(offset: Int, limit: Int): Result<List<Pokemon>> {
+        /*return when (val databaseResponse = pokemonLocalDataSource.fetchAllPokemonWithAbilities()) {
             is DatabaseResponse.Error<List<PokemonWithAbilities>> -> {
-                return when (val apiResponse = pokedexRemoteDataSource.fetchPokemonListResponse()) {
-                    is ApiResponse.Success<PokemonListResponse> -> {
-                        Result.Success(RemotePokemonMapper.mapToPokemonList(apiResponse.data))
-                    }
 
-                    is ApiResponse.Error<PokemonListResponse> -> {
-                        Result.Error(apiResponse.message)
-                    }
-                }
             }
 
             is DatabaseResponse.Success<List<PokemonWithAbilities>> -> {
                 Result.Success(LocalPokemonMapper.mapToPokemonList(databaseResponse.data))
+            }
+        }*/
+        return when (val apiResponse = pokedexRemoteDataSource.fetchPokemonListResponse(offset, limit)) {
+            is ApiResponse.Success<PokemonListResponse> -> {
+                Result.Success(RemotePokemonMapper.mapToPokemonList(apiResponse.data))
+            }
+
+            is ApiResponse.Error<PokemonListResponse> -> {
+                Result.Error(apiResponse.message)
             }
         }
     }

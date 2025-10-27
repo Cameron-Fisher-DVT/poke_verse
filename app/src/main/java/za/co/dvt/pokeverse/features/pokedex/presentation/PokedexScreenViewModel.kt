@@ -1,6 +1,7 @@
 package za.co.dvt.pokeverse.features.pokedex.presentation
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +17,8 @@ import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SavePokemonListUseCas
 import za.co.dvt.pokeverse.presentation.BaseViewModel
 import za.co.dvt.pokeverse.presentation.navigation.Destination
 import za.co.dvt.pokeverse.presentation.navigation.Navigator
+import kotlin.compareTo
+import kotlin.text.compareTo
 
 class PokedexScreenViewModel(
     private val pokedexFlowManager: PokedexFlowManager,
@@ -25,20 +28,61 @@ class PokedexScreenViewModel(
     private val fetchPokemonInformationUseCase: FetchPokemonInformationUseCase
 ) : BaseViewModel() {
 
-    init {
-        fetchPokemonList()
-    }
-
     data class PokemonListState(
         val pokemonList: List<Pokemon> = emptyList(),
         val errorMessage: String = ""
     )
+
+    data class RequestParameterState(
+        val offset: Int = 0,
+        val limit: Int = 20
+    )
+
+    private val requestParameterMutableState = mutableStateOf(RequestParameterState())
+    val requestParameterState: State<RequestParameterState> = requestParameterMutableState
 
     private val displayProgressDialogMutableState = mutableStateOf(true)
     val displayProgressDialogState: State<Boolean> = displayProgressDialogMutableState
 
     private val pokemonListMutableState = mutableStateOf(PokemonListState())
     val pokemonListState: State<PokemonListState> = pokemonListMutableState
+
+    private companion object {
+        const val POKEMON_ITEMS_PER_PAGE = 20
+        const val POKEMON_LIST_LIMIT = 100
+    }
+
+    val canLoadPreviousMutableState = mutableStateOf((requestParameterState.value.offset + requestParameterState.value.limit) > POKEMON_ITEMS_PER_PAGE)
+    val canLoadNextMutableState = mutableStateOf(requestParameterState.value.limit < POKEMON_LIST_LIMIT)
+    val pokemonItemsMutableState = mutableStateOf("${requestParameterState.value.offset + 1}-${minOf(requestParameterState.value.offset + requestParameterState.value.limit, POKEMON_LIST_LIMIT)}")
+
+    fun updateOffset(increase: Boolean) {
+        val newOffset = if (increase) {
+            requestParameterState.value.offset + (requestParameterState.value.limit - requestParameterState.value.offset)
+        } else {
+            requestParameterState.value.offset - (requestParameterState.value.limit - requestParameterState.value.offset)
+        }
+
+        val newLimit = if (increase) {
+            requestParameterState.value.limit + (requestParameterState.value.limit - requestParameterState.value.offset)
+        } else {
+            requestParameterState.value.limit - (requestParameterState.value.limit - requestParameterState.value.offset)
+        }
+
+        if (newOffset in 0..POKEMON_LIST_LIMIT) {
+            requestParameterMutableState.value = RequestParameterState(offset = newOffset, limit = newLimit)
+            fetchPokemonList()
+        }
+
+        canLoadPreviousMutableState.value = (requestParameterState.value.offset + requestParameterState.value.limit) > POKEMON_ITEMS_PER_PAGE
+        canLoadNextMutableState.value = requestParameterState.value.limit < POKEMON_LIST_LIMIT
+        pokemonItemsMutableState.value = "${requestParameterState.value.offset + 1}-${minOf(requestParameterState.value.limit, POKEMON_LIST_LIMIT)}"
+    }
+
+
+    init {
+        fetchPokemonList()
+    }
 
     private fun displayProgressDialog(shouldDisplay: Boolean = true) {
         displayProgressDialogMutableState.value = shouldDisplay
@@ -58,7 +102,7 @@ class PokedexScreenViewModel(
 
     fun fetchPokemonList() = CoroutineScope(Dispatchers.IO).launch {
         displayProgressDialog()
-        val result = fetchPokemonListUseCase()
+        val result = fetchPokemonListUseCase(requestParameterState.value.offset, requestParameterState.value.limit)
         when (result) {
             is Result.Error -> {
                 displayProgressDialog(false)

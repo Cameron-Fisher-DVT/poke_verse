@@ -1,5 +1,6 @@
-package za.co.dvt.composecorelib.informational
+package za.co.dvt.composecorelib.features.presentation.informational
 
+import za.co.dvt.composecorelib.R
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextOverflow
 
@@ -43,7 +45,11 @@ fun ExpandableTextView(text: String, modifier: Modifier = Modifier) {
                 shape = RectangleShape
             ) {
                 Text(
-                    text = (if (isExpanded) "Less" else "More").uppercase()
+                    text = (if (isExpanded) {
+                        stringResource(R.string.expandable_text_view_less)
+                    } else {
+                        stringResource(R.string.expandable_text_view_more)
+                    }).uppercase()
                 )
             }
         }

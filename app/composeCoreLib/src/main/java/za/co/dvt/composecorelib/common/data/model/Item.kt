@@ -1,4 +1,4 @@
-package za.co.dvt.composecorelib.model
+package za.co.dvt.composecorelib.common.data.model
 
 class Item private constructor(
     val id: String,
