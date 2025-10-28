@@ -13,7 +13,7 @@ val menuModule = module {
         MenuManagementLocalDataSourceImpl(get())
     }
     factory<MenuManagementRepository> {
-        MenuManagementRepositoryImpl(get())
+        MenuManagementRepositoryImpl(get(), get())
     }
     factory {
         SaveDarkModeUseCase(get())

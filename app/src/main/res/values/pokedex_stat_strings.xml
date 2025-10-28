@@ -2,4 +2,6 @@
 <resources>
     <string name="pokedex_stat_pokemon_name">Pokemon name</string>
     <string name="pokedex_stat_arrow_back">ArrowBack</string>
+    <string name="pokedex_stat_added_to_favourites">Added to favourites.</string>
+    <string name="pokedex_stat_removed_from_favourites">Removed from favourites.</string>
 </resources>

@@ -6,7 +6,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import za.co.dvt.pokeverse.R
 import za.co.dvt.pokeverse.common.domain.common.Result
+import za.co.dvt.pokeverse.common.manager.resourceManager.ResourceManager
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.UpdatePokemonUseCase
 import za.co.dvt.pokeverse.presentation.BaseViewModel
@@ -15,6 +17,7 @@ import za.co.dvt.pokeverse.presentation.navigation.Navigator
 class PokedexStatScreenViewModel(
     private val pokedexFlowManager: PokedexFlowManager,
     private val navigator: Navigator,
+    private val resourceManager: ResourceManager,
     private val updatePokemonUseCase: UpdatePokemonUseCase
 ): BaseViewModel() {
     fun navigateToPokedexScreen() = viewModelScope.launch(Dispatchers.Main) {
@@ -51,9 +54,9 @@ class PokedexStatScreenViewModel(
                 displayProgressDialog(false)
                 pokemonFavouriteMutableState.value = PokemonFavouriteState(pokemon = result.data)
                 if (result.data.isFavourite) {
-                    displaySnackbar("Added to favourites.")
+                    displaySnackbar(resourceManager.getString(R.string.pokedex_stat_added_to_favourites))
                 } else {
-                    displaySnackbar("Removed from favourites.")
+                    displaySnackbar(resourceManager.getString(R.string.pokedex_stat_removed_from_favourites))
                 }
             }
         }
