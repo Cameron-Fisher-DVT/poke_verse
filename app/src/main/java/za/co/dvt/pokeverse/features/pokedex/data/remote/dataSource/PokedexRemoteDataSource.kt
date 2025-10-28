@@ -5,6 +5,6 @@ import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.Pokemo
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInformationResponse.PokemonInformationResponse
 
 interface PokedexRemoteDataSource {
-    suspend fun fetchPokemonListResponse(): ApiResponse<PokemonListResponse>
+    suspend fun fetchPokemonListResponse(offset: Int, limit: Int): ApiResponse<PokemonListResponse>
     suspend fun fetchPokemonInformationResponse(pokemonId: String): ApiResponse<PokemonInformationResponse>
 }

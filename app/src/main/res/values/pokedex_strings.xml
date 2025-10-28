@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pokedex_poke_verse">PokeVerse</string>
+    <string name="pokedex_previous">Previous</string>
+    <string name="pokedex_next">Next</string>
+    <string name="pokedex_search">Search</string>
+    <string name="pokedex_menu">Menu</string>
+    <string name="pokedex_pokemon_go">Pokemon GO</string>
+    <string name="pokedex_no_entries_found">No entries found.</string>
+    <string name="pokedex_items_not_saved">Items not saved.</string>
+    <string name="pokedex_successfully_saved">Successfully saved.</string>
+    <string name="pokedex_item_not_updated">Item not update.</string>
+    <string name="pokedex_no_search_history_available">No search history available.</string>
+</resources>
