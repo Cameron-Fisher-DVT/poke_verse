@@ -9,6 +9,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import za.co.dvt.pokeverse.features.menu.presentation.MenuScreen
 import za.co.dvt.pokeverse.features.menu.presentation.MenuScreenViewModel
+import za.co.dvt.pokeverse.features.pokedex.domain.model.search.SearchHistory
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreen
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreenViewModel
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexStatScreen
@@ -58,7 +59,7 @@ fun Navigation(
             ) { backStackEntry ->
                 val pokedexScreenViewModel = koinViewModel<PokedexScreenViewModel>()
                 PokedexScreen(
-                    pokemonListState = pokedexScreenViewModel.pokemonListState,
+                    pokemonListUiState = pokedexScreenViewModel.pokemonListUiState,
                     displayProgressDialogState = pokedexScreenViewModel.displayProgressDialogState,
                     onNavigateToPokedexStatScreenClick = { pokemon ->
                         pokedexScreenViewModel.saveSelectedPokemon(pokemon)
@@ -70,6 +71,11 @@ fun Navigation(
                     canLoadPrevious = pokedexScreenViewModel.canLoadPreviousMutableState,
                     canLoadNext = pokedexScreenViewModel.canLoadNextMutableState,
                     pokemonItemsMutableState = pokedexScreenViewModel.pokemonItemsMutableState,
+                    searchHistoryState = pokedexScreenViewModel.searchHistoryState,
+                    onSaveSearchHistory = {
+                        pokedexScreenViewModel.filterPokemonList(it)
+                        pokedexScreenViewModel.saveSearchHistory(SearchHistory(query = it))
+                    },
                     isDarkModeState = pokedexScreenViewModel.isDarkModeMutableState,
                     onDarkModeChanged = {
                         onCheckChangedDarkMode(it)

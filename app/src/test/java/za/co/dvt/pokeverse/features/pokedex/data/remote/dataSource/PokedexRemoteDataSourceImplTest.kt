@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import za.co.dvt.pokeverse.common.data.remote.common.ApiResponse
+import za.co.dvt.pokeverse.common.data.remote.infrastructure.NetworkResponse
 import za.co.dvt.pokeverse.features.pokedex.data.remote.adapter.PokemonApiAdapter
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.PokemonListResponse
 import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemon.dto.PokemonResultDto
@@ -42,9 +43,9 @@ class PokedexRemoteDataSourceImplTest {
     @Test
     @DisplayName("Should Return Success When Fetch Pokemon List Response Is Called")
     fun shouldReturnSuccessWhenFetchPokemonListResponseIsCalled() = runTest {
-        coEvery { pokemonApiAdapter.fetchPokemonListResponse() } returns ApiResponse.Success(mockPokemonListResponse)
+        coEvery { pokemonApiAdapter.fetchPokemonListResponse(any<Int>(), any<Int>()) } returns NetworkResponse.Success(mockPokemonListResponse)
 
-        val result = sut.fetchPokemonListResponse()
+        val result = sut.fetchPokemonListResponse(1, 1)
 
         assertTrue(result is ApiResponse.Success)
         result as ApiResponse.Success
@@ -57,9 +58,9 @@ class PokedexRemoteDataSourceImplTest {
     @DisplayName("Should Return Error When Fetch Pokemon List Response Fails")
     fun shouldReturnErrorWhenFetchPokemonListResponseFails() = runTest {
         val errorMessage = "Network error"
-        coEvery { pokemonApiAdapter.fetchPokemonListResponse() } returns ApiResponse.Error(errorMessage)
+        coEvery { pokemonApiAdapter.fetchPokemonListResponse(any<Int>(), any<Int>()) } returns NetworkResponse.NetworkError(Exception(errorMessage))
 
-        val result = sut.fetchPokemonListResponse()
+        val result = sut.fetchPokemonListResponse(1, 1)
 
         assertTrue(result is ApiResponse.Error)
         result as ApiResponse.Error

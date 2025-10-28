@@ -1,7 +1,6 @@
 package za.co.dvt.pokeverse.features.pokedex.presentation
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +19,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,28 +29,32 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import za.co.dvt.composecorelib.common.data.model.Item
 import za.co.dvt.composecorelib.features.presentation.buttons.CustomCardItemView
+import za.co.dvt.composecorelib.features.presentation.miscellaneous.CustomSearchBarView
 import za.co.dvt.composecorelib.features.presentation.miscellaneous.ProgressDialogView
 import za.co.dvt.pokeverse.R
 import za.co.dvt.pokeverse.common.extensions.toTitleCase
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.description
-import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreenViewModel.PokemonListState
+import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreenViewModel.PokemonListUiState
 import za.co.dvt.pokeverse.presentation.ui.theme.LocalDimensions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokedexScreen(
     modifier: Modifier = Modifier,
-    pokemonListState: State<PokemonListState>,
+    pokemonListUiState: State<PokemonListUiState>,
     displayProgressDialogState: State<Boolean>,
     paginate: (Boolean) -> Unit,
     canLoadPrevious: State<Boolean>,
     canLoadNext: State<Boolean>,
     pokemonItemsMutableState: State<String>,
     isDarkModeState: State<Boolean>,
+    searchHistoryState: State<List<String>>,
     onDarkModeChanged: (Boolean) -> Unit,
+    onSaveSearchHistory: (String) -> Unit,
     onNavigateToPokedexStatScreenClick: (pokemon: Pokemon) -> Unit,
     onNavigateToMenuClick: () -> Unit
+
 ) {
     val dimensions = LocalDimensions.current
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -86,6 +88,7 @@ fun PokedexScreen(
                             contentDescription = stringResource(R.string.pokedex_next)
                         )
                     }
+
                     IconButton(
                         onClick = { onNavigateToMenuClick() }
                     ) {
@@ -111,8 +114,9 @@ fun PokedexScreen(
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.titleLarge
                 )
-                if (pokemonListState.value.pokemonList.isNotEmpty()) {
-                    val pokemonGo = pokemonListState.value.pokemonList.random()
+                val pokemonList = pokemonListUiState.value.pokemonList
+                if (pokemonList.isNotEmpty()) {
+                    val pokemonGo = pokemonList.random()
                     CustomCardItemView(
                         itemBuilder = Item.Builder()
                             .title(pokemonGo.name.toTitleCase())
@@ -132,13 +136,19 @@ fun PokedexScreen(
     ) { padding ->
         Surface(
             modifier = modifier
-                .fillMaxSize()
                 .padding(padding)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val pokemonList = pokemonListState.value.pokemonList
+                CustomSearchBarView(
+                    searchHistoryList = searchHistoryState.value,
+                    onSearch = {
+                        onSaveSearchHistory(it)
+                    }
+                )
+
+                val pokemonList = pokemonListUiState.value.pokemonList
                 LazyColumn {
                     items(
                         count = pokemonList.size,
@@ -168,14 +178,16 @@ fun PokedexScreen(
 @Preview(showBackground = true)
 fun PreviewPokedexScreen() {
     PokedexScreen(
-        pokemonListState = remember { mutableStateOf(PokemonListState()) },
+        pokemonListUiState = remember { mutableStateOf(PokemonListUiState()) },
         displayProgressDialogState = remember { mutableStateOf(false) },
         onNavigateToPokedexStatScreenClick = {},
         paginate = {},
-        canLoadPrevious = remember { mutableStateOf(false)},
-        canLoadNext = remember { mutableStateOf(false)},
+        canLoadPrevious = remember { mutableStateOf(false) },
+        canLoadNext = remember { mutableStateOf(false) },
         isDarkModeState = remember { mutableStateOf(false) },
+        searchHistoryState = remember { mutableStateOf(listOf()) },
         onDarkModeChanged = {},
-        pokemonItemsMutableState = remember { mutableStateOf("") }
+        onSaveSearchHistory = {},
+        pokemonItemsMutableState = remember { mutableStateOf("") },
     ) {}
 }

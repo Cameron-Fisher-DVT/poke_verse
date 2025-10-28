@@ -1,4 +1,4 @@
-package za.co.dvt.pokeverse.common.data.local.model
+package za.co.dvt.pokeverse.common.data.local.model.pokemon
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -23,7 +23,7 @@ import androidx.room.PrimaryKey
 )
 data class PokemonAbilityEntity(
     @PrimaryKey
-    val pokemonAbilityId: String = "",
-    val name: String = "",
-    val pokemonId: String = ""
+    val pokemonAbilityId: String,
+    val name: String,
+    val pokemonId: String
 )

@@ -1,4 +1,4 @@
-package za.co.dvt.pokeverse.common.data.local.model
+package za.co.dvt.pokeverse.common.data.local.model.pokemon
 
 import androidx.room.Embedded
 import androidx.room.Relation
