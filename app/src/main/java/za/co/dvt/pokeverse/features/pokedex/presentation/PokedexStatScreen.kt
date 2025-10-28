@@ -10,6 +10,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -20,14 +22,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import za.co.dvt.composecorelib.buttons.CustomCardItemView
-import za.co.dvt.composecorelib.miscellaneous.ProgressDialogView
-import za.co.dvt.composecorelib.model.Item
+import za.co.dvt.composecorelib.common.data.model.Item
+import za.co.dvt.composecorelib.features.presentation.buttons.CustomCardItemView
+import za.co.dvt.composecorelib.features.presentation.miscellaneous.ProgressDialogView
+import za.co.dvt.pokeverse.R
 import za.co.dvt.pokeverse.common.extensions.toTitleCase
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.description
+import za.co.dvt.pokeverse.presentation.ui.theme.LocalDimensions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,18 +40,21 @@ fun PokedexStatScreen(
     pokemon: Pokemon,
     pokemonFavouriteState: State<PokedexStatScreenViewModel.PokemonFavouriteState>,
     displayProgressDialogState: State<Boolean>,
+    snackbarHostState: SnackbarHostState,
     onFavouriteClick: (pokemon: Pokemon) -> Unit,
     onNavigateUp: () -> Unit,
 ) {
+    val dimensions = LocalDimensions.current
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Pokemon name") },
+                title = { Text(stringResource(R.string.pokedex_stat_pokemon_name)) },
                 navigationIcon = {
                     IconButton(
                         onClick = { onNavigateUp() }
                     ) {
-                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, "ArrowBack")
+                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, stringResource(R.string.pokedex_stat_arrow_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -65,7 +72,7 @@ fun PokedexStatScreen(
                 .padding(padding)
         ) {
             Column(
-                modifier = modifier.padding(top = 16.dp),
+                modifier = modifier.padding(top = dimensions.spacing16),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CustomCardItemView(
@@ -91,6 +98,7 @@ fun PokedexStatScreen(
 fun PreviewPokedexStatScreen() {
     PokedexStatScreen(
         pokemon = Pokemon(),
+        snackbarHostState = SnackbarHostState(),
         displayProgressDialogState = remember { mutableStateOf(false) },
         pokemonFavouriteState = remember { mutableStateOf(PokedexStatScreenViewModel.PokemonFavouriteState()) },
         onFavouriteClick = {}

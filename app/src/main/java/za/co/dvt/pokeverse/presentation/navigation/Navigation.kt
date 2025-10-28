@@ -9,6 +9,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import za.co.dvt.pokeverse.features.menu.presentation.MenuScreen
 import za.co.dvt.pokeverse.features.menu.presentation.MenuScreenViewModel
+import za.co.dvt.pokeverse.features.pokedex.domain.model.search.SearchHistory
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreen
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreenViewModel
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexStatScreen
@@ -43,11 +44,12 @@ fun Navigation(
             ) {
                 val menuScreenViewModel = koinViewModel<MenuScreenViewModel>()
                 MenuScreen(
-                    isDarkModeMutableState = menuScreenViewModel.isDarkModeMutableState,
+                    isDarkModeState = menuScreenViewModel.isDarkModeMutableState,
                     onNavigateUp = {
                         menuScreenViewModel.navigateToPokedexScreen()
                     }
                 ) { isDarkMode ->
+                    menuScreenViewModel.saveDarkMode(isDarkMode)
                     onCheckChangedDarkMode(isDarkMode)
                 }
             }
@@ -57,12 +59,28 @@ fun Navigation(
             ) { backStackEntry ->
                 val pokedexScreenViewModel = koinViewModel<PokedexScreenViewModel>()
                 PokedexScreen(
-                    pokemonListState = pokedexScreenViewModel.pokemonListState,
+                    pokemonListUiState = pokedexScreenViewModel.pokemonListUiState,
                     displayProgressDialogState = pokedexScreenViewModel.displayProgressDialogState,
                     onNavigateToPokedexStatScreenClick = { pokemon ->
-                    pokedexScreenViewModel.saveSelectedPokemon(pokemon)
-                    pokedexScreenViewModel.navigateToPokedexStatScreen()
-                }) {
+                        pokedexScreenViewModel.saveSelectedPokemon(pokemon)
+                        pokedexScreenViewModel.navigateToPokedexStatScreen()
+                    },
+                    paginate = {
+                        pokedexScreenViewModel.paginate(it)
+                    },
+                    canLoadPrevious = pokedexScreenViewModel.canLoadPreviousMutableState,
+                    canLoadNext = pokedexScreenViewModel.canLoadNextMutableState,
+                    pokemonItemsMutableState = pokedexScreenViewModel.pokemonItemsMutableState,
+                    searchHistoryState = pokedexScreenViewModel.searchHistoryState,
+                    onSaveSearchHistory = {
+                        pokedexScreenViewModel.filterPokemonList(it)
+                        pokedexScreenViewModel.saveSearchHistory(SearchHistory(query = it))
+                    },
+                    isDarkModeState = pokedexScreenViewModel.isDarkModeMutableState,
+                    onDarkModeChanged = {
+                        onCheckChangedDarkMode(it)
+                    }
+                ) {
                     pokedexScreenViewModel.navigateToMenuScreen()
                 }
             }
@@ -72,11 +90,12 @@ fun Navigation(
             ) {
                 val pokedexStatScreenViewModel = koinViewModel<PokedexStatScreenViewModel>()
 
-                PokedexStatScreen (
+                PokedexStatScreen(
                     pokemon = pokedexStatScreenViewModel.getSelectedPokemon(),
                     onFavouriteClick = { pokemon ->
                         pokedexStatScreenViewModel.updatePokemon(pokemon)
                     },
+                    snackbarHostState = pokedexStatScreenViewModel.snackbarHostState,
                     displayProgressDialogState = pokedexStatScreenViewModel.displayProgressDialogState,
                     pokemonFavouriteState = pokedexStatScreenViewModel.pokemonFavouriteState,
                     onNavigateUp = {

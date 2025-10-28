@@ -9,8 +9,8 @@ import za.co.dvt.pokeverse.features.pokedex.data.remote.api.model.pokemonInforma
 class PokedexRemoteDataSourceImpl(
     private val pokemonApiAdapter: PokemonApiAdapter
 ): PokedexRemoteDataSource {
-    override suspend fun fetchPokemonListResponse(): ApiResponse<PokemonListResponse> {
-        return when(val networkResponse = pokemonApiAdapter.fetchPokemonListResponse()) {
+    override suspend fun fetchPokemonListResponse(offset: Int, limit: Int): ApiResponse<PokemonListResponse> {
+        return when(val networkResponse = pokemonApiAdapter.fetchPokemonListResponse(offset, limit)) {
             is NetworkResponse.HttpError -> {
                 ApiResponse.Error(networkResponse.message)
             }

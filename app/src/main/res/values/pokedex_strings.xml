@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pokedex_poke_verse">PokeVerse</string>
+    <string name="pokedex_previous">Previous</string>
+    <string name="pokedex_next">Next</string>
+    <string name="pokedex_search">Search</string>
+    <string name="pokedex_menu">Menu</string>
+    <string name="pokedex_pokemon_go">Pokemon GO</string>
+</resources>

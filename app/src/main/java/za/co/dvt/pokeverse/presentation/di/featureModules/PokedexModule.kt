@@ -12,10 +12,13 @@ import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemote
 import za.co.dvt.pokeverse.features.pokedex.data.remote.dataSource.PokedexRemoteDataSourceImpl
 import za.co.dvt.pokeverse.features.pokedex.data.remote.implementation.PokeApiImpl
 import za.co.dvt.pokeverse.features.pokedex.data.repository.PokedexRepositoryImpl
+import za.co.dvt.pokeverse.features.pokedex.domain.model.search.SearchHistory
 import za.co.dvt.pokeverse.features.pokedex.domain.repository.PokedexRepository
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonInformationUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonListUseCase
+import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchSearchHistoryListUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SavePokemonListUseCase
+import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SaveSearchHistoryUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.UpdatePokemonUseCase
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexFlowManager
 import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreen
@@ -29,7 +32,10 @@ val pokedexModule = module {
         PokedexRemoteDataSourceImpl(get())
     }
     factory<PokemonLocalDataSource> {
-        PokemonLocalDataSourceImpl(get<ApplicationDatabase>().pokemonDao())
+        PokemonLocalDataSourceImpl(
+            get<ApplicationDatabase>().pokemonDao(),
+            get<ApplicationDatabase>().searchHistoryDao()
+        )
     }
     factory<PokedexRepository> {
         PokedexRepositoryImpl(get(), get())
@@ -46,11 +52,20 @@ val pokedexModule = module {
     factory {
         UpdatePokemonUseCase(get())
     }
+    factory {
+        SaveSearchHistoryUseCase(get())
+    }
+    factory {
+        FetchSearchHistoryListUseCase(get())
+    }
 
     single { PokedexFlowManager() }
 
     viewModel {
         PokedexScreenViewModel(
+            get(),
+            get(),
+            get(),
             get(),
             get(),
             get(),
@@ -68,6 +83,6 @@ val pokedexModule = module {
     }
 
     viewModel {
-        MenuScreenViewModel(get())
+        MenuScreenViewModel(get(), get(), get())
     }
 }

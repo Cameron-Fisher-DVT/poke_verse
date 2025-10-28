@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "abe92bd1539d3458c25ac34cf58bcf89",
+    "identityHash": "871da7851cc33c04d583eabfdce1aac1",
     "entities": [
       {
         "tableName": "Pokemon",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pokemonId` TEXT NOT NULL, `name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `isFavourite` INTEGER NOT NULL, PRIMARY KEY(`pokemonId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`pokemonId` TEXT NOT NULL, `name` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `isFavourite` INTEGER NOT NULL, `isBattleOnly` INTEGER NOT NULL, PRIMARY KEY(`pokemonId`))",
         "fields": [
           {
             "fieldPath": "pokemonId",
@@ -29,6 +29,12 @@
           {
             "fieldPath": "isFavourite",
             "columnName": "isFavourite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isBattleOnly",
+            "columnName": "isBattleOnly",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -114,12 +120,48 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "SearchHistory",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`searchHistoryId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `query` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "searchHistoryId",
+            "columnName": "searchHistoryId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "query",
+            "columnName": "query",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "searchHistoryId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_SearchHistory_searchHistoryId",
+            "unique": true,
+            "columnNames": [
+              "searchHistoryId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_SearchHistory_searchHistoryId` ON `${TABLE_NAME}` (`searchHistoryId`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'abe92bd1539d3458c25ac34cf58bcf89')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '871da7851cc33c04d583eabfdce1aac1')"
     ]
   }
 }

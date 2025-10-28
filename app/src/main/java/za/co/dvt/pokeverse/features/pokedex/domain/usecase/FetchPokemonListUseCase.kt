@@ -7,5 +7,5 @@ import za.co.dvt.pokeverse.features.pokedex.domain.repository.PokedexRepository
 class FetchPokemonListUseCase(
     private val pokedexRepository: PokedexRepository
 ) {
-    suspend operator fun invoke(): Result<List<Pokemon>> = pokedexRepository.fetchPokemonList()
+    suspend operator fun invoke(offset: Int, limit: Int): Result<List<Pokemon>> = pokedexRepository.fetchPokemonList(offset, limit)
 }

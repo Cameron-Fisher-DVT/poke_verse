@@ -2,13 +2,13 @@ package za.co.dvt.pokeverse.features.pokedex.presentation
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import za.co.dvt.pokeverse.common.domain.common.Result
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.UpdatePokemonUseCase
-import za.co.dvt.pokeverse.features.pokedex.presentation.PokedexScreenViewModel.PokemonListState
 import za.co.dvt.pokeverse.presentation.BaseViewModel
 import za.co.dvt.pokeverse.presentation.navigation.Navigator
 
@@ -17,7 +17,7 @@ class PokedexStatScreenViewModel(
     private val navigator: Navigator,
     private val updatePokemonUseCase: UpdatePokemonUseCase
 ): BaseViewModel() {
-    fun navigateToPokedexScreen() = CoroutineScope(Dispatchers.IO).launch {
+    fun navigateToPokedexScreen() = viewModelScope.launch(Dispatchers.Main) {
         navigator.navigateUp()
     }
 
@@ -35,12 +35,8 @@ class PokedexStatScreenViewModel(
         val errorMessage: String = ""
     )
 
-    private val pokemonFavouriteMutableState = mutableStateOf(PokemonFavouriteState())
+    private val pokemonFavouriteMutableState = mutableStateOf(PokemonFavouriteState(pokemon = pokedexFlowManager.selectedPokemon))
     val pokemonFavouriteState: State<PokemonFavouriteState> = pokemonFavouriteMutableState
-
-    init {
-        updatePokemon(pokedexFlowManager.selectedPokemon)
-    }
 
     fun updatePokemon(pokemon: Pokemon) = CoroutineScope(Dispatchers.IO).launch {
         displayProgressDialog()
@@ -54,6 +50,11 @@ class PokedexStatScreenViewModel(
             is Result.Success<Pokemon> -> {
                 displayProgressDialog(false)
                 pokemonFavouriteMutableState.value = PokemonFavouriteState(pokemon = result.data)
+                if (result.data.isFavourite) {
+                    displaySnackbar("Added to favourites.")
+                } else {
+                    displaySnackbar("Removed from favourites.")
+                }
             }
         }
     }

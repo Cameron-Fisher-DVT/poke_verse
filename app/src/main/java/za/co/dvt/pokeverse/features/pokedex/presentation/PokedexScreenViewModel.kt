@@ -8,61 +8,149 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import za.co.dvt.pokeverse.common.domain.common.Result
+import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_ITEMS_PER_PAGE
+import za.co.dvt.pokeverse.common.domain.config.Constants.POKEMON_LIST_LIMIT
+import za.co.dvt.pokeverse.features.menu.domain.usecase.FetchDarkModeUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.Pokemon
 import za.co.dvt.pokeverse.features.pokedex.domain.model.pokemon.PokemonInformation
+import za.co.dvt.pokeverse.features.pokedex.domain.model.search.SearchHistory
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonInformationUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchPokemonListUseCase
+import za.co.dvt.pokeverse.features.pokedex.domain.usecase.FetchSearchHistoryListUseCase
 import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SavePokemonListUseCase
+import za.co.dvt.pokeverse.features.pokedex.domain.usecase.SaveSearchHistoryUseCase
 import za.co.dvt.pokeverse.presentation.BaseViewModel
 import za.co.dvt.pokeverse.presentation.navigation.Destination
 import za.co.dvt.pokeverse.presentation.navigation.Navigator
+import kotlin.collections.listOf
 
 class PokedexScreenViewModel(
     private val pokedexFlowManager: PokedexFlowManager,
     private val navigator: Navigator,
     private val fetchPokemonListUseCase: FetchPokemonListUseCase,
     private val savePokemonListUseCase: SavePokemonListUseCase,
-    private val fetchPokemonInformationUseCase: FetchPokemonInformationUseCase
+    private val fetchPokemonInformationUseCase: FetchPokemonInformationUseCase,
+    private val fetchDarkModeUseCase: FetchDarkModeUseCase,
+    private val saveSearchHistoryUseCase: SaveSearchHistoryUseCase,
+    private val fetchSearchHistoryListUseCase: FetchSearchHistoryListUseCase
 ) : BaseViewModel() {
 
-    init {
-        fetchPokemonList()
-    }
-
-    data class PokemonListState(
+    data class PokemonListUiState(
         val pokemonList: List<Pokemon> = emptyList(),
         val errorMessage: String = ""
     )
 
+    data class RequestParameterState(
+        val offset: Int = 0,
+        val limit: Int = 20
+    )
+
+    private val requestParameterMutableState = mutableStateOf(RequestParameterState())
+    val requestParameterState: State<RequestParameterState> = requestParameterMutableState
+
+    private val searchHistoryMutableState = mutableStateOf(listOf<String>())
+    val searchHistoryState: State<List<String>> = searchHistoryMutableState
+
     private val displayProgressDialogMutableState = mutableStateOf(true)
     val displayProgressDialogState: State<Boolean> = displayProgressDialogMutableState
 
-    private val pokemonListMutableState = mutableStateOf(PokemonListState())
-    val pokemonListState: State<PokemonListState> = pokemonListMutableState
+    private val pokemonListMutableState = mutableStateOf(PokemonListUiState())
+    val pokemonListUiState: State<PokemonListUiState> = pokemonListMutableState
+
+    val canLoadPreviousMutableState = mutableStateOf((requestParameterState.value.offset + requestParameterState.value.limit) > POKEMON_ITEMS_PER_PAGE)
+    val canLoadNextMutableState = mutableStateOf(requestParameterState.value.limit < POKEMON_LIST_LIMIT)
+    val pokemonItemsMutableState = mutableStateOf("${requestParameterState.value.offset + 1}-${minOf(requestParameterState.value.offset + requestParameterState.value.limit, POKEMON_LIST_LIMIT)}")
+
+    val isDarkModeMutableState = mutableStateOf(false)
+
+    fun filterPokemonList(searchQuery: String) {
+        val filteredPokemonList = pokemonListUiState.value.pokemonList.filter { it.name.contains(searchQuery, true) }
+        pokemonListMutableState.value = PokemonListUiState(pokemonList = filteredPokemonList)
+    }
+
+    fun paginate(increase: Boolean) {
+        val newOffset = if (increase) {
+            requestParameterState.value.offset + (requestParameterState.value.limit - requestParameterState.value.offset)
+        } else {
+            requestParameterState.value.offset - (requestParameterState.value.limit - requestParameterState.value.offset)
+        }
+
+        val newLimit = if (increase) {
+            requestParameterState.value.limit + (requestParameterState.value.limit - requestParameterState.value.offset)
+        } else {
+            requestParameterState.value.limit - (requestParameterState.value.limit - requestParameterState.value.offset)
+        }
+
+        if (newOffset in 0..POKEMON_LIST_LIMIT) {
+            requestParameterMutableState.value = RequestParameterState(offset = newOffset, limit = newLimit)
+            fetchPokemonList()
+        }
+
+        canLoadPreviousMutableState.value = (requestParameterState.value.offset + requestParameterState.value.limit) > POKEMON_ITEMS_PER_PAGE
+        canLoadNextMutableState.value = requestParameterState.value.limit < POKEMON_LIST_LIMIT
+        pokemonItemsMutableState.value = "${requestParameterState.value.offset + 1}-${minOf(requestParameterState.value.limit, POKEMON_LIST_LIMIT)}"
+    }
+
+    init {
+        fetchPokemonList()
+        fetchDarkMode()
+        fetchSearchHistoryList()
+    }
 
     private fun displayProgressDialog(shouldDisplay: Boolean = true) {
         displayProgressDialogMutableState.value = shouldDisplay
     }
 
-    fun navigateToPokedexStatScreen() = viewModelScope.launch(Dispatchers.IO) {
-        navigator.navigate(destination = Destination.PokedexStatScreen.route)
+    fun navigateToPokedexStatScreen() = viewModelScope.launch(Dispatchers.Main) {
+        navigator.navigate(destination = Destination.PokedexStatScreen.route) {
+            launchSingleTop = true
+        }
     }
 
     fun saveSelectedPokemon(pokemon: Pokemon) {
         pokedexFlowManager.selectedPokemon = pokemon
     }
 
-    fun navigateToMenuScreen() = viewModelScope.launch(Dispatchers.IO) {
-        navigator.navigate(destination = Destination.MenuScreen.route)
+    fun navigateToMenuScreen() = viewModelScope.launch(Dispatchers.Main) {
+        navigator.navigate(destination = Destination.MenuScreen.route) {
+            launchSingleTop = true
+        }
+    }
+
+    fun saveSearchHistory(searchHistory: SearchHistory) = CoroutineScope(Dispatchers.IO).launch {
+        displayProgressDialog()
+        val result = saveSearchHistoryUseCase(searchHistory)
+        when (result) {
+            is Result.Error -> {
+                displayProgressDialog(false)
+            }
+            is Result.Success<SearchHistory> -> {
+                displayProgressDialog(false)
+            }
+        }
+    }
+
+    fun fetchSearchHistoryList() = CoroutineScope(Dispatchers.IO).launch {
+        displayProgressDialog()
+        val result = fetchSearchHistoryListUseCase()
+        when (result) {
+            is Result.Error -> {
+                displayProgressDialog(false)
+            }
+            is Result.Success<List<SearchHistory>> -> {
+                displayProgressDialog(false)
+                searchHistoryMutableState.value = result.data.map { it.query }
+            }
+        }
     }
 
     fun fetchPokemonList() = CoroutineScope(Dispatchers.IO).launch {
         displayProgressDialog()
-        val result = fetchPokemonListUseCase()
+        val result = fetchPokemonListUseCase(requestParameterState.value.offset, requestParameterState.value.limit)
         when (result) {
             is Result.Error -> {
                 displayProgressDialog(false)
-                pokemonListMutableState.value = PokemonListState(errorMessage = result.message)
+                pokemonListMutableState.value = PokemonListUiState(errorMessage = result.message)
             }
 
             is Result.Success<List<Pokemon>> -> {
@@ -96,6 +184,17 @@ class PokedexScreenViewModel(
         savePokemonListUseCase(successfulResults)
 
         displayProgressDialog(false)
-        pokemonListMutableState.value = PokemonListState(pokemonList = successfulResults)
+        pokemonListMutableState.value = PokemonListUiState(pokemonList = successfulResults)
+    }
+
+    fun fetchDarkMode() = viewModelScope.launch {
+        when (val result = fetchDarkModeUseCase()) {
+            is Result.Error -> {
+                isDarkModeMutableState.value = false
+            }
+            is Result.Success<Boolean> -> {
+                isDarkModeMutableState.value = result.data
+            }
+        }
     }
 }
