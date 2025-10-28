@@ -3,11 +3,14 @@ package za.co.dvt.pokeverse.features.pokedex.data.local.dataSource
 import za.co.dvt.pokeverse.common.data.local.common.DatabaseResponse
 import za.co.dvt.pokeverse.common.data.local.database.DatabaseConstants
 import za.co.dvt.pokeverse.common.data.local.database.dao.PokemonDao
-import za.co.dvt.pokeverse.common.data.local.model.PokemonEntity
-import za.co.dvt.pokeverse.common.data.local.model.PokemonWithAbilities
+import za.co.dvt.pokeverse.common.data.local.database.dao.SearchHistoryDao
+import za.co.dvt.pokeverse.common.data.local.model.pokemon.PokemonEntity
+import za.co.dvt.pokeverse.common.data.local.model.pokemon.PokemonWithAbilities
+import za.co.dvt.pokeverse.common.data.local.model.search.SearchHistoryEntity
 
 class PokemonLocalDataSourceImpl(
-    private val pokemonDao: PokemonDao
+    private val pokemonDao: PokemonDao,
+    private val searchHistoryDao: SearchHistoryDao
 ) : PokemonLocalDataSource {
     override suspend fun fetchAllPokemonWithAbilities(offset: Int, limit: Int): DatabaseResponse<List<PokemonWithAbilities>> {
         val pokemonWithAbilitiesList = pokemonDao.fetchAllPokemonWithAbilities(offset, limit)
@@ -33,6 +36,24 @@ class PokemonLocalDataSourceImpl(
             DatabaseResponse.Error("Item not update.")
         } else {
             DatabaseResponse.Success(pokemonEntity)
+        }
+    }
+
+    override suspend fun saveSearchHistory(searchHistoryEntity: SearchHistoryEntity): DatabaseResponse<SearchHistoryEntity> {
+        val result = searchHistoryDao.insert(searchHistoryEntity)
+        return if (result == DatabaseConstants.INVALID_OPERATION) {
+            DatabaseResponse.Error("Item not saved.")
+        } else {
+            DatabaseResponse.Success(searchHistoryEntity)
+        }
+    }
+
+    override suspend fun fetchSearchHistoryList(): DatabaseResponse<List<SearchHistoryEntity>> {
+        val result = searchHistoryDao.fetchLastTenSearchHistoryQueries()
+        return if (result.isNotEmpty()) {
+            DatabaseResponse.Success(result)
+        } else {
+            DatabaseResponse.Error("No search history available.")
         }
     }
 }
