@@ -34,7 +34,8 @@ val pokedexModule = module {
     factory<PokemonLocalDataSource> {
         PokemonLocalDataSourceImpl(
             get<ApplicationDatabase>().pokemonDao(),
-            get<ApplicationDatabase>().searchHistoryDao()
+            get<ApplicationDatabase>().searchHistoryDao(),
+            get()
         )
     }
     factory<PokedexRepository> {
@@ -76,6 +77,7 @@ val pokedexModule = module {
 
     viewModel {
         PokedexStatScreenViewModel(
+            get(),
             get(),
             get(),
             get()
